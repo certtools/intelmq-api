@@ -13,8 +13,8 @@ from pathlib import Path
 import mako  # type: ignore
 from mako.lookup import TemplateLookup  # type: ignore
 
-from intelmq_manager.config import Config
-from intelmq_manager.util import shell_command_for_errors
+from intelmq_api.config import Config
+from intelmq_api.util import shell_command_for_errors
 
 
 template_dir = Path(__file__).parent / "templates"
