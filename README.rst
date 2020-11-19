@@ -59,3 +59,14 @@ The following configuration options are available:
 * ``session_duration``: the maximal duration of a session, its 86400 seconds by default
 * ``allow_origins``: a list of origins the responses of the API can be shared with. Allows every origin by default.
 * ``html_dir``: the path to the html files of the ``intelmq-manager``. If this path exists it is served under the path ``/management``
+
+*************
+Adding a user
+*************
+
+If you set theh ``session_store`` configuration setting you have to create a user to be able to access the API functionality. You can do this also using hug:
+
+.. code-block:: bash
+
+   hug -m intelmq_api.serve -c add_user <username>
+
