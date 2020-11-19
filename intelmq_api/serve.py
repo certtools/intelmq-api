@@ -32,10 +32,13 @@ def add_api():
     return [intelmq_api.api]
 
 
-@hug.static("/")
+@hug.static("/manager/")
 def static_dirs():
-    return [os.path.join(os.path.dirname(__file__), "static")]
+    return [api_config.html_dir]
 
+@hug.get("/manager")
+def manager(request):
+    hug.redirect.to(request.path + '/index.html')
 
 @hug.startup()
 def setup(api):
