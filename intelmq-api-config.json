@@ -1,0 +1,8 @@
+{
+	"intelmq_ctl_cmd": ["intelmqctl"],
+	"allowed_path": "/opt/intelmq/var/lib/bots/",
+	"_session_store": "/tmp/intelmq-session.sqlite",
+	"session_duration": 86400,
+	"allow_origins": ["*"],
+	"html_dir": "/usr/share/intelmq-manager/html/"
+}
