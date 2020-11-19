@@ -15,7 +15,6 @@ import sys
 import os
 import string
 import typing
-import getpass
 
 import hug  # type: ignore
 
@@ -197,21 +196,3 @@ def login(username: str, password: str):
                     "username": username,
                     }
     return "Invalid username and/or password"
-
-
-@hug.cli()
-def add_user(username: str):
-    config_file = os.environ.get("INTELMQ_MANAGER_CONFIG")
-    if config_file is None:
-        print("Configuration file given in INTELMQ_MANAGER_CONFIG"
-              " environment variable", file=sys.stderr)
-        exit(1)
-
-    initialize_api(config_file)
-    if session_store is None:
-        print("No session store configured in {!r}".format(config_file),
-              file=sys.stderr)
-        exit(1)
-
-    password = getpass.getpass()
-    session_store.add_user(username, password)
