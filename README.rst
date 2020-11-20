@@ -10,6 +10,13 @@ Installing and running intelmq-api
 
 Install ``intelmq-api`` using your preferred package installation mechanism (``pip``, ``apt``, ``yum``, ``dnf``...).
 
+* ``pip install intelmq-api``
+* ``apt install intelmq-api``
+* ``yum install intelmq-api``
+* ``zypper install intelmq-api``
+
+Depending on your setup you might have to install ``sudo`` to make it possible for the ``intelmq-api`` to run the ``intelmq`` command as the user-account usually used to run ``intelmq`` (which is also often called ``intelmq``).
+
 You can run ``intelmq-api`` directly using ``hug``:
 
 .. code-block:: bash
@@ -37,7 +44,15 @@ Configuring intelmq-api
 ***********************
 
 intelmq-api is configured using a configuration file in ``json`` format. The path to the configuration file is set using
-the environment variable ``INTELMQ_MANAGER_CONFIG``. A sample configuration file ``intelmq-api-config.json`` is part of
+the environment variable ``INTELMQ_MANAGER_CONFIG``. When running the API using ``hug``, you can set the environment
+variable like this:
+
+.. code-block:: bash
+
+   INTELMQ_MANAGER_CONFIG=intelmq-api-config.json hug -m intelmq_api.serve
+
+
+A sample configuration file ``intelmq-api-config.json`` is part of
 the distribution, it is also listed here fore reference:
 
 .. code-block:: json
@@ -53,7 +68,10 @@ the distribution, it is also listed here fore reference:
 
 The following configuration options are available:
 
-* ``intelmq_ctl_cmd``: the path to your ``intelmqctl`` command. If this is not set in a configuration file the default is used, which is ``sudo -u intelmq /usr/local/bin/intelmqctl``
+* ``intelmq_ctl_cmd``: Your ``intelmqctl`` command. If this is not set in a configuration file the default is used, which is ``["sudo", "-u", "intelmq", "/usr/local/bin/intelmqctl"]``
+   The option `"intelmq_ctl_cmd"` is a list of strings so that we can avoid shell-injection vulnerabilities because no shell is involved when running the command.
+   This means that if the command you want to use needs parameters, they have to be separate strings.
+
 * ``allowed_path``: intelmq-api allows acces to files in this path
 * ``session_store``: this is an optional path to a sqlite database, which is used for sesssion storage and authentication. If it is not set (which is the default), no authentication is used!
 * ``session_duration``: the maximal duration of a session, its 86400 seconds by default
@@ -70,3 +88,31 @@ If you set theh ``session_store`` configuration setting you have to create a use
 
    hug -m intelmq_api.serve -c add_user <username>
 
+**************
+Usual problems
+**************
+
+If the command is not configured correctly, you'll see exceptions on startup like this:
+
+```
+intelmq_manager.runctl.IntelMQCtlError: <ERROR_MESSAGE>
+```
+
+This means the intelmqctl command could not be executed as a subprocess.
+The ``<ERROR_MESSAGE>`` should indicate why.
+
+To save the positions of the bots in the configuration map, you need
+an existing writable ``manager/positions.conf`` file. If it's missing,
+just create an empty one.
+
+*************
+Type checking
+*************
+
+Except for the parts that directly deal with ``hug``, the code can be
+typechecked with ``mypy``. To run the type checker, start with the module
+``serve``:
+
+```
+mypy intelmq_manager/serve.py
+```
