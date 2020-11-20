@@ -57,8 +57,8 @@ variable like this:
    INTELMQ_MANAGER_CONFIG=intelmq-api-config.json hug -m intelmq_api.serve
 
 
-A sample configuration file ``intelmq-api-config.json`` is part of
-the distribution, it is also listed here fore reference:
+A sample configuration file ``intelmq-api-config.json`` is part of the distribution, it is also listed here fore reference.
+In this configuration the setting ``session_store`` is disabled by prepending it with an underscore:
 
 .. code-block:: json
 
@@ -99,9 +99,9 @@ Usual problems
 
 If the command is not configured correctly, you'll see exceptions on startup like this:
 
-```
-intelmq_manager.runctl.IntelMQCtlError: <ERROR_MESSAGE>
-```
+.. code-block:: bash
+
+   intelmq_manager.runctl.IntelMQCtlError: <ERROR_MESSAGE>
 
 This means the intelmqctl command could not be executed as a subprocess.
 The ``<ERROR_MESSAGE>`` should indicate why.
@@ -118,6 +118,6 @@ Except for the parts that directly deal with ``hug``, the code can be
 typechecked with ``mypy``. To run the type checker, start with the module
 ``serve``:
 
-```
-mypy intelmq_manager/serve.py
-```
+.. code-block:: bash
+
+   mypy intelmq_manager/serve.py
