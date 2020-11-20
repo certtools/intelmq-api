@@ -15,8 +15,9 @@ Run with hug from the shell as:
    hug -f intelmq_api/serve.py
 """
 
-import os
 import getpass
+import os
+import sys
 
 import hug # type: ignore
 
@@ -55,15 +56,13 @@ def setup(api):
 
 @hug.cli()
 def add_user(username: str):
-    session_file = api_config.session_store
-    if session_file is not None:
-        session_store = intelmq_api.session.SessionStore(str(session_file),
-                                             api_config.session_duration)
-
-    if session_store is None:
-        print("No session store configured in configuration!",
-              file=sys.stderr)
+    if api_config.session_store is None:
+        print("No session store configured in configuration!", file=sys.stderr)
         exit(1)
+
+    session_store = intelmq_api.session.SessionStore(str(api_config.session_store),
+                                         api_config.session_duration)
+
 
     password = getpass.getpass()
     session_store.add_user(username, password)

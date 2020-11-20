@@ -31,9 +31,9 @@ class Config:
     html_dir: Path = Path("/usr/share/intelmq-manager/html/")
 
 
-    def __init__(self, filename: str):
+    def __init__(self, filename: Optional[str]):
         """Load configuration from JSON file"""
-        raw = []
+        raw = {}
 
         if filename:
             with open(filename) as f:
