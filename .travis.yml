@@ -1,0 +1,8 @@
+language: python
+dist: bionic
+install:
+    - sudo apt-get install python3-setuptools python3-hug
+    - pip install mypy
+script:
+  - mypy --config-file=mypy.ini
+  - python3 -m unittest discover -s tests/
