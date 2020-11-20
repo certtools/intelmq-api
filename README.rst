@@ -2,6 +2,11 @@
 intelmq-api
 ###########
 
+|Build Status|
+
+.. |Build Status| image:: https://travis-ci.com/certtools/intelmq-api.svg?branch=develop
+   :target: https://travis-ci.com/certtools/intelmq-api
+
 intelmq-api is a `hug <http://hug.rest>`_ based API for the `intelmq <https://github.com/certtools/intelmq/>`_ project.
 
 **********************************
