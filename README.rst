@@ -81,7 +81,7 @@ The following configuration options are available:
    The option `"intelmq_ctl_cmd"` is a list of strings so that we can avoid shell-injection vulnerabilities because no shell is involved when running the command.
    This means that if the command you want to use needs parameters, they have to be separate strings.
 
-* ``allowed_path``: intelmq-api allows acces to files in this path
+* ``allowed_path``: intelmq-api can grant **read-only** access to specific files- this setting defines the path those files can reside in
 * ``session_store``: this is an optional path to a sqlite database, which is used for sesssion storage and authentication. If it is not set (which is the default), no authentication is used!
 * ``session_duration``: the maximal duration of a session, its 86400 seconds by default
 * ``allow_origins``: a list of origins the responses of the API can be shared with. Allows every origin by default.
