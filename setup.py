@@ -23,5 +23,5 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
 	description="Intelmq-API is a REST API to manage an intelmq, a solution for IT security teams for collecting and processing security feeds",
-    data_files = [('config', ['intelmq-api-config.json'])]
+    data_files = [('share/intelmq-api', ['intelmq-api-config.json'])]
 )
