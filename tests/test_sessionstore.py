@@ -1,3 +1,8 @@
+"""Tests for IntelMQ-Manager
+
+SPDX-FileCopyrightText: 2020 Intevation GmbH <https://intevation.de>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
 import unittest
 import tempfile
 import os

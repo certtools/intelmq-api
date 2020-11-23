@@ -1,3 +1,8 @@
+""" Setup file for intelmq-api
+
+SPDX-FileCopyrightText: 2020 Birger Schacht
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
 import setuptools
 
 from intelmq_api.version import __version__
