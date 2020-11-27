@@ -17,6 +17,8 @@ intelmq-api is a `hug <http://hug.rest>`_ based API for the `intelmq <https://gi
 Installing and running intelmq-api
 **********************************
 
+``intelmq-api`` requires at least `Python 3.6 <https://www.python.org/downloads/release/python-360/>`_.
+
 Install ``intelmq-api`` using your preferred package installation mechanism (``pip``, ``apt``, ``yum``, ``dnf``...).
 
 * ``pip install intelmq-api``
