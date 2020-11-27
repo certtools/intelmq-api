@@ -108,63 +108,63 @@ def token_authentication(*args, **kw):
         return True
 
 
-@hug.get("/api/botnet", requires=token_authentication)
+@hug.get("/api/botnet", requires=token_authentication, versions=1)
 @typing.no_type_check
 def botnet(action: Actions, group: Groups = None):
     return runner.botnet(action, group)
 
 
-@hug.get("/api/bot", requires=token_authentication)
+@hug.get("/api/bot", requires=token_authentication, versions=1)
 @typing.no_type_check
 def bot(action: Actions, id: ID):
     return runner.bot(action, id)
 
 
-@cache_get("/api/getlog", requires=token_authentication)
+@cache_get("/api/getlog", requires=token_authentication, versions=1)
 @typing.no_type_check
 def getlog(id: ID, lines: int, level: Levels = "DEBUG"):
     return runner.log(id, lines, level)
 
 
-@cache_get("/api/queues", requires=token_authentication)
+@cache_get("/api/queues", requires=token_authentication, versions=1)
 def queues():
     return runner.list("queues")
 
 
-@cache_get("/api/queues-and-status", requires=token_authentication)
+@cache_get("/api/queues-and-status", requires=token_authentication, versions=1)
 def queues_and_status():
     return runner.list("queues-and-status")
 
 
-@hug.get("/api/version", requires=token_authentication)
+@hug.get("/api/version", requires=token_authentication, versions=1)
 def version(request):
     return runner.version()
 
 
-@hug.get("/api/check", requires=token_authentication)
+@hug.get("/api/check", requires=token_authentication, versions=1)
 def check():
     return runner.check()
 
 
-@hug.get("/api/clear", requires=token_authentication)
+@hug.get("/api/clear", requires=token_authentication, versions=1)
 @typing.no_type_check
 def clear(id: ID):
     return runner.clear(id)
 
 
-@hug.post("/api/run", requires=token_authentication)
+@hug.post("/api/run", requires=token_authentication, versions=1)
 @typing.no_type_check
 def run(bot: str, cmd: BotCmds, show: Bool = False, dry: Bool = False,
         msg: str = ""):
     return runner.run(bot, cmd, show, dry, msg)
 
 
-@hug.get("/api/debug", requires=token_authentication)
+@hug.get("/api/debug", requires=token_authentication, versions=1)
 def debug():
     return runner.debug()
 
 
-@hug.get("/api/config", requires=token_authentication)
+@hug.get("/api/config", requires=token_authentication, versions=1)
 def config(response, file: str, fetch: bool=False):
     result = file_access.load_file_or_directory(file, fetch)
     if result is None:
@@ -177,7 +177,7 @@ def config(response, file: str, fetch: bool=False):
 
 @hug.post("/api/save", parse_body=True,
           inputs={"application/x-www-form-urlencoded": hug.input_format.text},
-          requires=token_authentication)
+          requires=token_authentication, versions=1)
 def save(body, file: str):
     try:
         file_access.save_file(file, body)
@@ -186,7 +186,7 @@ def save(body, file: str):
         return str(e)
 
 
-@hug.post("/api/login")
+@hug.post("/api/login", versions=1)
 def login(username: str, password: str):
     if session_store is not None:
         known = session_store.verify_user(username, password)
