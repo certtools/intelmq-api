@@ -1,0 +1,25 @@
+Source: intelmq-api
+Section: python
+Priority: optional
+Maintainer: CERT.AT IntelMQ Team <intelmq-team@cert.at>
+Uploaders: Birger Schacht <schacht@cert.at>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools
+Standards-Version: 4.5.0
+Homepage: https://github.com/certtools/intelmq-api
+Rules-Requires-Root: no
+
+Package: python3-intelmq-api
+Architecture: all
+Depends: ${misc:Depends},
+         ${python3:Depends},
+         ${shlibs:Depends},
+         python3-requests,
+         python3-hug
+Description: HUG based API for the intelmq project
+ IntelMQ-API provides a simple API for controlling and configuring an IntelMQ
+ installation. IntelMQ is a solution for IT security teams for collecting and
+ processing security feeds.
+
