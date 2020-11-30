@@ -1,6 +1,6 @@
 #Github Workflow CodeQL analysis for intelmq-api
 #
-#SPDX-FileCopyrightText: 2020 Birger Schacht
+#SPDX-FileCopyrightText: 2020 IntelMQ Team <intelmq-team@cert.at>
 #SPDX-License-Identifier: AGPL-3.0-or-later
 
 name: "CodeQL Analysis"
@@ -10,9 +10,11 @@ name: "CodeQL Analysis"
 # branches:
 on:
   push:
-    branches: [ develop ]
+    branches: [develop, maintenance, master]
   pull_request:
     branches: [ develop ]
+  schedule:
+    - cron: '0 4 * * 5'
 
 jobs:
   analyze:
@@ -22,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'python' ]
+        language: ['javascript', 'python']
 
     steps:
     - name: Checkout repository

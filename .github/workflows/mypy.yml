@@ -1,9 +1,9 @@
-#Github Workflow typechecking & unittests for intelmq-api
+#Github Workflow Mypy check
 #
-#SPDX-FileCopyrightText: 2020 Birger Schacht
+#SPDX-FileCopyrightText: 2020 IntelMQ Team
 #SPDX-License-Identifier: AGPL-3.0-or-later
 
-name: "IntelMQ typechecking & unittests"
+name: "Mypy typecheck"
 
 on:
   push:
@@ -34,19 +34,3 @@ jobs:
     - name: Static type checking with mypy
       run: |
         mypy --config-file=mypy.ini
-    - name: Run unittests
-      run: |
-        python -m unittest discover -s tests/
-
-  license:
-    name: Check license compliance
-    runs-on: ubuntu-latest
-
-    strategy:
-      fail-fast: false
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-    - name: REUSE compliance check
-      uses: fsfe/reuse-action@v1
