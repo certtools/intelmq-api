@@ -3,7 +3,7 @@ Section: python
 Priority: optional
 Maintainer: CERT.AT IntelMQ Team <intelmq-team@cert.at>
 Uploaders: Birger Schacht <schacht@cert.at>
-Build-Depends: debhelper-compat (= 12),
+Build-Depends: debhelper (>= 9),
                dh-python,
                python3-all,
                python3-setuptools
