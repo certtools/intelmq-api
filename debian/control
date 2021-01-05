@@ -17,7 +17,8 @@ Depends: ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends},
          python3-requests,
-         python3-hug
+         python3-hug,
+         intelmq
 Description: HUG based API for the intelmq project
  IntelMQ-API provides a simple API for controlling and configuring an IntelMQ
  installation. IntelMQ is a solution for IT security teams for collecting and
