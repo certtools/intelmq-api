@@ -19,7 +19,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         "hug>=2.3.0",
-        "intelmq>=2.3.0",
+        "intelmq>=2.2.3",
     ],
     python_requires='>=3.6',
     description="Intelmq-API is a hug based API to intelmq,"
