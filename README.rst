@@ -80,10 +80,9 @@ In this configuration the setting ``session_store`` is disabled by prepending it
 The following configuration options are available:
 
 * ``intelmq_ctl_cmd``: Your ``intelmqctl`` command. If this is not set in a configuration file the default is used, which is ``["sudo", "-u", "intelmq", "/usr/local/bin/intelmqctl"]``
-   The option `"intelmq_ctl_cmd"` is a list of strings so that we can avoid shell-injection vulnerabilities because no shell is involved when running the command.
-   This means that if the command you want to use needs parameters, they have to be separate strings.
-
-* ``allowed_path``: intelmq-api can grant **read-only** access to specific files- this setting defines the path those files can reside in
+  The option ``"intelmq_ctl_cmd"`` is a list of strings so that we can avoid shell-injection vulnerabilities because no shell is involved when running the command.
+  This means that if the command you want to use needs parameters, they have to be separate strings.
+* ``allowed_path``: intelmq-api can grant **read-only** access to specific files - this setting defines the path those files can reside in.
 * ``session_store``: this is an optional path to a sqlite database, which is used for sesssion storage and authentication. If it is not set (which is the default), no authentication is used!
 * ``session_duration``: the maximal duration of a session, its 86400 seconds by default
 * ``allow_origins``: a list of origins the responses of the API can be shared with. Allows every origin by default.
@@ -93,7 +92,7 @@ The following configuration options are available:
 Adding a user
 *************
 
-If you set theh ``session_store`` configuration setting you have to create a user to be able to access the API functionality. You can do this also using hug:
+If you enable the ``session_store`` you will have to create user accounts to be able to access the API functionality. You can also do this using hug:
 
 .. code-block:: bash
 
