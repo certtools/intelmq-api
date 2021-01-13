@@ -19,6 +19,7 @@ Depends: ${misc:Depends},
          python3-requests,
          python3-hug,
          intelmq
+Recommends: libapache2-mod-wsgi-py3
 Description: HUG based API for the intelmq project
  IntelMQ-API provides a simple API for controlling and configuring an IntelMQ
  installation. IntelMQ is a solution for IT security teams for collecting and
