@@ -25,5 +25,5 @@ setuptools.setup(
     description="Intelmq-API is a hug based API to intelmq,"
                 " a solution for IT security teams for collecting"
                 " and processing security feeds",
-    data_files=[('share/intelmq-api', ['intelmq-api-config.json'])]
+    data_files=[('share/intelmq-api', ['contrib/intelmq-api-config.json', 'contrib/apache.conf'])]
 )
