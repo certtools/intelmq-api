@@ -12,7 +12,7 @@ jobs:
     name: A build on different Debian distributions
     strategy:
       matrix:
-        codename: ['stretch', 'buster', 'bullseye']
+        codename: ['buster', 'bullseye']
 
     steps:
     - name: Checkout repository
