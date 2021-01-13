@@ -55,12 +55,12 @@ Configuring intelmq-api
 ***********************
 
 intelmq-api is configured using a configuration file in ``json`` format. The path to the configuration file is set using
-the environment variable ``INTELMQ_MANAGER_CONFIG``. When running the API using ``hug``, you can set the environment
+the environment variable ``INTELMQ_API_CONFIG``. When running the API using ``hug``, you can set the environment
 variable like this:
 
 .. code-block:: bash
 
-   INTELMQ_MANAGER_CONFIG=intelmq-api-config.json hug -m intelmq_api.serve
+   INTELMQ_API_CONFIG=intelmq-api-config.json hug -m intelmq_api.serve
 
 
 A sample configuration file ``intelmq-api-config.json`` is part of the distribution, it is also listed here fore reference.

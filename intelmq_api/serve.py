@@ -25,7 +25,7 @@ import intelmq_api.api
 import intelmq_api.config
 import intelmq_api.session
 
-api_config: intelmq_api.config.Config = intelmq_api.config.Config(os.environ.get("INTELMQ_MANAGER_CONFIG"))
+api_config: intelmq_api.config.Config = intelmq_api.config.Config(os.environ.get("INTELMQ_API_CONFIG"))
 
 api = hug.API(__name__)
 api.http.add_middleware(hug.middleware.CORSMiddleware(api, allow_origins=api_config.allow_origins))
@@ -48,9 +48,10 @@ def setup(api):
     """Initialize the API when hug starts.
 
     This function calls initialize_api passing the value of the
-    environment variable INTELMQ_MANAGER_CONFIG as the name of the
+    environment variable INTELMQ_API_CONFIG as the name of the
     configuration file.
     """
+    print("IntelMQ API Configfile: {}".format(os.environ.get("INTELMQ_API_CONFIG")))
     intelmq_api.api.initialize_api(api_config)
 
 
