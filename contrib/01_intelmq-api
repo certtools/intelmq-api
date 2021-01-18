@@ -1,0 +1,3 @@
+# intelmq-api sudoers file, allowing the intelmq-api which usually
+# is run by a webserver, to run intelmqctl as user intelmq
+www-data ALL=(intelmq) NOPASSWD: /usr/bin/intelmqctl
