@@ -1,5 +1,5 @@
 {
-	"intelmq_ctl_cmd": ["intelmqctl"],
+	"intelmq_ctl_cmd": ["sudo", "-u", "intelmq", "intelmqctl"],
 	"allowed_path": "/opt/intelmq/var/lib/bots/",
 	"_session_store": "/tmp/intelmq-session.sqlite",
 	"session_duration": 86400,
