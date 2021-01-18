@@ -1,0 +1,14 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "configure" ] ; then
+    if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
+        . /usr/share/apache2/apache2-maintscript-helper
+        apache2_invoke ensite intelmq-api
+
+        adduser www-data intelmq
+    fi
+        chmod -R g+w /etc/intelmq
+fi
+
+#DEBHELPER#
