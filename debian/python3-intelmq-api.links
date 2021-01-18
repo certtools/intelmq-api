@@ -1,2 +1,2 @@
-etc/intelmq-api/apache-virtualhost.conf etc/apache2/sites-available/intelmq-api.conf
+etc/intelmq-api/intelmq-api-apache.conf etc/apache2/conf-available/intelmq-api.conf
 etc/intelmq-api/01_intelmq-api etc/sudoers.d/01_intelmq-api

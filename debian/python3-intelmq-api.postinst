@@ -4,7 +4,7 @@ set -e
 if [ "$1" = "configure" ] ; then
     if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
         . /usr/share/apache2/apache2-maintscript-helper
-        apache2_invoke ensite intelmq-api
+        apache2_invoke enconf intelmq-api.conf
 
         adduser www-data intelmq
     fi
