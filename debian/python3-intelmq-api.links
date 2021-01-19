@@ -1,2 +1,2 @@
 etc/intelmq/api-apache.conf etc/apache2/conf-available/intelmq-api.conf
-etc/intelmq/api-suders.conf etc/sudoers.d/01_intelmq-api
+etc/intelmq/api-sudoers.conf etc/sudoers.d/01_intelmq-api
