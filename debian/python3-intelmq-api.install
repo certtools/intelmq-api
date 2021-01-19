@@ -1,0 +1,2 @@
+#!/usr/bin/dh-exec
+contrib/api-sudoers.conf => /etc/sudoers.d/01_intelmq-api
