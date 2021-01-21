@@ -25,6 +25,7 @@ setuptools.setup(
     description="Intelmq-API is a hug based API to intelmq,"
                 " a solution for IT security teams for collecting"
                 " and processing security feeds",
-    data_files=[('/etc/intelmq', ['contrib/api-config.json', 'contrib/api-apache.conf', 'contrib/api-sudoers.conf'])],
+    data_files=[('/etc/intelmq', ['contrib/api-config.json', 'contrib/api-apache.conf', 'contrib/api-sudoers.conf']),
+                ('/etc/intelmq/manager', ['contrib/positions.conf'])],
     package_data={'intelmq_api': ['intelmq-api.wsgi']}
 )
