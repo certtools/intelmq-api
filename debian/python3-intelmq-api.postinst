@@ -8,7 +8,8 @@ if [ "$1" = "configure" ] ; then
 
         adduser www-data intelmq
     fi
-        chmod -R g+w /etc/intelmq
+    chown -R intelmq:intelmq /etc/intelmq
+    chmod -R g+w /etc/intelmq
 fi
 
 #DEBHELPER#
