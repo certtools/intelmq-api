@@ -166,6 +166,7 @@ def debug():
 
 @hug.get("/api/config", requires=token_authentication, versions=1)
 def config(response, file: str, fetch: bool=False):
+    global file_access
     result = file_access.load_file_or_directory(file, fetch)
     if result is None:
         return ["Unknown resource"]
@@ -179,6 +180,7 @@ def config(response, file: str, fetch: bool=False):
           inputs={"application/x-www-form-urlencoded": hug.input_format.text},
           requires=token_authentication, versions=1)
 def save(body, file: str):
+    global file_access
     try:
         file_access.save_file(file, body)
         return "success"
