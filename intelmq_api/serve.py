@@ -35,14 +35,6 @@ def add_api():
     return [intelmq_api.api]
 
 
-@hug.static("/manager/")
-def static_dirs():
-    return [api_config.html_dir]
-
-@hug.get("/manager")
-def manager(request):
-    hug.redirect.to(request.path + '/index.html')
-
 @hug.startup()
 def setup(api):
     """Initialize the API when hug starts.

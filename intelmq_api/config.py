@@ -28,8 +28,6 @@ class Config:
 
     allow_origins: List[str] = ['*']
 
-    html_dir: Path = Path("/usr/share/intelmq-manager/html/")
-
 
     def __init__(self, filename: Optional[str]):
         """Load configuration from JSON file"""
@@ -53,8 +51,3 @@ class Config:
 
         if "allow_origins" in raw:
             self.allow_origins = raw['allow_origins']
-
-        if "html_dir" in raw:
-            self.html_dir = Path(raw["html_dir"])
-
-        print("Serving html from {}".format(self.html_dir))
