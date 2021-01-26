@@ -48,7 +48,7 @@ def setup(api):
 
 
 @hug.cli()
-def add_user(username: str):
+def add_user(username: str, password: str = None):
     if api_config.session_store is None:
         print("No session store configured in configuration!", file=sys.stderr)
         exit(1)
@@ -57,5 +57,6 @@ def add_user(username: str):
                                          api_config.session_duration)
 
 
-    password = getpass.getpass()
+    if password is None:
+        password = getpass.getpass()
     session_store.add_user(username, password)
