@@ -1,0 +1,18 @@
+Template: intelmq-api/setup
+Type: boolean
+Default: true
+Description: Set up an intitial account for IntelMQ API?
+
+Template: intelmq-api/user
+Type: string
+Description: IntelMQ API user
+ Please provide a username for the initial IntelMQ API account.
+
+Template: intelmq-api/password
+Type: password
+Description: IntelMQ API password
+ Please provide a password for the initial IntelMQ API account.
+
+Template: intelmq-api/password-repeat
+Type: password
+Description: Password confirmation

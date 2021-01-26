@@ -1,15 +1,31 @@
-#!/bin/sh
-set -e
+#!/bin/sh -e
 
 if [ "$1" = "configure" ] ; then
     if [ -e /usr/share/apache2/apache2-maintscript-helper ] ; then
         . /usr/share/apache2/apache2-maintscript-helper
-        apache2_invoke enconf intelmq-api.conf
+        apache2_invoke enconf intelmq-api.conf || true
 
-        adduser www-data intelmq
+        #adduser www-data intelmq
+	usermod -a -G intelmq www-data
     fi
-    chown -R intelmq:intelmq /etc/intelmq
-    chmod -R g+w /etc/intelmq
 fi
+
+# Source debconf library.
+. /usr/share/debconf/confmodule
+
+db_get intelmq-api/setup
+if [ "$RET" = "true" ]; then
+	db_get intelmq-api/user
+	ACCOUNT=$RET
+	db_get intelmq-api/password
+	PASSWORD=$RET
+
+	INTELMQ_API_CONFIG=/etc/intelmq/api-config.json hug -m intelmq_api.serve -c add_user $ACCOUNT --password=$PASSWORD
+	echo "Done Configuring IntelMQ API.." >&2
+fi
+db_stop
+
+chown -R intelmq:intelmq /etc/intelmq
+chmod -R g+w /etc/intelmq
 
 #DEBHELPER#

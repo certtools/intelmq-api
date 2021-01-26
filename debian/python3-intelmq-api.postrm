@@ -2,7 +2,7 @@
 set -e
 
 if [ "$1" = "remove" ] ; then
-  deluser www-data intelmq
+  deluser www-data intelmq || true
 fi
 
 #DEBHELPER#

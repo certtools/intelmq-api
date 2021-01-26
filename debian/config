@@ -1,0 +1,29 @@
+#!/bin/sh -e
+
+# Source debconf library
+. /usr/share/debconf/confmodule
+
+db_input high intelmq-api/setup || true
+db_go || true
+
+MATCH="false"
+
+db_get intelmq-api/setup
+if [ "$RET" = "true" ]; then
+	db_input high intelmq-api/user || true
+	db_go || true
+	while [ "$MATCH" = "false" ]; do
+		db_input high intelmq-api/password || true
+		db_go || true
+		db_input high intelmq-api/password-repeat || true
+		db_go || true
+		db_get intelmq-api/password
+		PASSWORD="$RET"
+		db_get intelmq-api/password-repeat
+		PASSWORD_REPEAT="$RET"
+		if [ "$PASSWORD" = "$PASSWORD_REPEAT" ]; then
+			MATCH="true"
+		fi
+	done
+fi
+db_go || true
