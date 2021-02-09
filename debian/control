@@ -12,7 +12,7 @@ Standards-Version: 4.5.0
 Homepage: https://github.com/certtools/intelmq-api
 Rules-Requires-Root: no
 
-Package: python3-intelmq-api
+Package: intelmq-api
 Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},
