@@ -32,10 +32,28 @@ class Config:
     def __init__(self, filename: Optional[str]):
         """Load configuration from JSON file"""
         raw = {}
+        config = False
+
+        configfiles = [
+            Path('/etc/intelmq/api-config.json'),
+            Path(__file__).parent.parent / 'etc/intelmq/api-config.json'
+        ]
 
         if filename:
-            with open(filename) as f:
-                raw = json.load(f)
+            configfiles.insert(0, Path(filename).resolve())
+
+        for path in configfiles:
+            if path.exists() and path.is_file():
+                print(f"Loading config from {path}")
+                config = True
+                with path.open() as f:
+                    try:
+                        raw = json.load(f)
+                    except json.decoder.JSONDecodeError:
+                        print(f"{path} did not contain valid JSON. Using default values.")
+                break
+        if not config:
+            print("Was not able to load a configfile. Using default values.")
 
         if "intelmq_ctl_cmd" in raw:
             self.intelmq_ctl_cmd = raw["intelmq_ctl_cmd"]

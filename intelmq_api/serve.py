@@ -43,7 +43,6 @@ def setup(api):
     environment variable INTELMQ_API_CONFIG as the name of the
     configuration file.
     """
-    print("IntelMQ API Configfile: {}".format(os.environ.get("INTELMQ_API_CONFIG")))
     intelmq_api.api.initialize_api(api_config)
 
 
