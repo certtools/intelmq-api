@@ -5,3 +5,7 @@
 
 override_dh_auto_build:
 	dh_auto_build
+
+override_dh_auto_install:
+	dh_auto_install
+	sed -i "s#/etc/intelmq/api-session.sqlite#/var/lib/dbconfig-common/sqlite3/intelmq-api/intelmqapi#" debian/intelmq-api/etc/intelmq/api-config.json

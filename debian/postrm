@@ -1,6 +1,14 @@
 #!/bin/sh
 set -e
 
+if [ -f /usr/share/debconf/confmodule ]; then
+    . /usr/share/debconf/confmodule
+fi
+if [ -f /usr/share/dbconfig-common/dpkg/postrm.sqlite3 ]; then
+    . /usr/share/dbconfig-common/dpkg/postrm.sqlite3
+    dbc_go intelmq-api "$@"
+fi
+
 if [ "$1" = "remove" ] ; then
   deluser www-data intelmq || true
 fi

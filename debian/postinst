@@ -12,6 +12,11 @@ fi
 
 # Source debconf library.
 . /usr/share/debconf/confmodule
+. /usr/share/dbconfig-common/dpkg/postinst.sqlite3
+
+dbc_dbfile_owner="www-data:www-data"
+
+dbc_go intelmq-api "$@"
 
 db_get intelmq-api/setup
 if [ "$RET" = "true" ]; then
