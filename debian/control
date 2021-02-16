@@ -21,6 +21,8 @@ Depends: ${misc:Depends},
          python3-hug,
          intelmq,
          sudo
+Breaks: intelmq-manager (<= 2.2)
+Replaces: intelmq-manager (<= 2.2)
 Recommends: libapache2-mod-wsgi-py3, apache2
 Description: HUG based API for the intelmq project
  IntelMQ-API provides a simple API for controlling and configuring an IntelMQ
