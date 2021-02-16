@@ -27,5 +27,6 @@ setuptools.setup(
                 " and processing security feeds",
     data_files=[('/etc/intelmq', ['contrib/api-config.json', 'contrib/api-apache.conf', 'contrib/api-sudoers.conf']),
                 ('/etc/intelmq/manager', ['contrib/positions.conf'])],
-    package_data={'intelmq_api': ['intelmq-api.wsgi']}
+    package_data={'intelmq_api': ['intelmq-api.wsgi']},
+    scripts = ['scripts/intelmq-api-adduser']
 )
