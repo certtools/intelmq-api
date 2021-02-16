@@ -20,7 +20,7 @@ if [ "$RET" = "true" ]; then
 	db_get intelmq-api/password
 	PASSWORD=$RET
 
-	INTELMQ_API_CONFIG=/etc/intelmq/api-config.json hug -m intelmq_api.serve -c add_user $ACCOUNT --password=$PASSWORD
+	hug -m intelmq_api.serve -c add_user $ACCOUNT --password=$PASSWORD
 	echo "Done Configuring IntelMQ API.." >&2
 fi
 db_stop
