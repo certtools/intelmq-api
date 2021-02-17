@@ -22,8 +22,8 @@ Depends: ${misc:Depends},
          intelmq,
          sudo,
          dbconfig-sqlite3 | dbconfig-no-thanks
-Breaks: intelmq-manager (<= 2.2)
-Replaces: intelmq-manager (<= 2.2)
+Breaks: intelmq-manager (< 2.3)
+Replaces: intelmq-manager (< 2.3)
 Recommends: libapache2-mod-wsgi-py3, apache2
 Description: HUG based API for the intelmq project
  IntelMQ-API provides a simple API for controlling and configuring an IntelMQ
