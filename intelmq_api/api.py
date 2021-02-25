@@ -136,6 +136,11 @@ def queues_and_status():
     return runner.list("queues-and-status")
 
 
+@cache_get("/api/bots", requires=token_authentication, versions=1)
+def bots():
+    return runner.list("bots")
+
+
 @hug.get("/api/version", requires=token_authentication, versions=1)
 def version(request):
     return runner.version()

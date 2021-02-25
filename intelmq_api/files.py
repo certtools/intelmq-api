@@ -59,7 +59,6 @@ class FileAccess:
             } # type: Dict[str, Path]
 
         self.readonly_files = {
-            'bots': Path('/opt/intelmq/etc/BOTS'),
             'harmonization': Path('/opt/intelmq/etc/harmonization.conf'),
             } # type: Dict[str, Path]
 
@@ -69,7 +68,6 @@ class FileAccess:
         self.writable_files["runtime"] = Path(paths["RUNTIME_CONF_FILE"])
         self.writable_files["positions"] = Path(paths["CONFIG_DIR"]
                                                 + "/manager/positions.conf")
-        self.readonly_files["bots"] = Path(paths["BOTS_FILE"])
         self.readonly_files["harmonization"] = Path(paths["HARMONIZATION_CONF_FILE"])
 
     def file_name_allowed(self, filename: str) -> Optional[Tuple[bool, Path]]:
