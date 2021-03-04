@@ -1,5 +1,5 @@
-intelmq-api (2.3.0~alpha3-1) UNRELEASED; urgency=medium
+intelmq-api (2.3.0-1) unstable; urgency=medium
 
   * Initial release.
 
- -- Birger Schacht <schacht@cert.at>  Mon, 23 Nov 2020 12:36:57 +0100
+ -- Birger Schacht <schacht@cert.at>  Thu, 04 Mar 2021 10:46:45 +0100
