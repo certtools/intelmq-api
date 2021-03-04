@@ -6,7 +6,7 @@ CHANGELOG
 =========
 
 
-2.3.0 (unreleased)
+2.3.0 (2021-03-04)
 ------------------
 
 This is the first release as separate project. ``intelmq-api`` has been a part of ``intelmq-manager`` but has now been turned into its own project.
