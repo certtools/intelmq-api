@@ -14,7 +14,7 @@ intelmq-api
 intelmq-api is a `hug <http://hug.rest>`_ based API for the `intelmq <https://github.com/certtools/intelmq/>`_ project.
 
 
-Extensive documentation regarding the installation, configuration and usage of the `intelmq-api` can be found in the `intelmq documentation <https://intelmq.readthedocs.io/en/latest/user/intelmq-api.html>`_.
+Extensive documentation regarding the installation, configuration and usage of the `intelmq-api` can be found in the `intelmq documentation <https://intelmq.readthedocs.io/en/maintenance/user/intelmq-api.html>`_.
 
 
 *************
