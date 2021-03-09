@@ -101,8 +101,12 @@ class SessionStore:
             con.executescript(INIT_DB_SQL)
 
     def execute(self, stmt: str, params: tuple) -> Optional[tuple]:
-        with self.get_con() as con:
-            return con.execute(stmt, params).fetchone()
+        try:
+            with self.get_con() as con:
+                return con.execute(stmt, params).fetchone()
+        except sqlite3.OperationalError as exc:
+            print(f"SQLite3-Error ({exc}): Possibly missing write permissions to session file (or the folder it is located in).")
+            return None
 
 
     #
