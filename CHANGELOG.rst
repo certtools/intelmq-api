@@ -6,6 +6,12 @@ CHANGELOG
 =========
 
 
+3.0.0 (unreleased)
+------------------
+
+The API endpoint ``/api/config`` no longer provides the ``BOTS`` file, as it was removed from IntelMQ. The new endpoint ``/api/bots`` provides the same information.
+
+
 2.3.0 (2021-03-04)
 ------------------
 
