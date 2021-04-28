@@ -21,15 +21,6 @@ from typing import Optional, Tuple, Union, Dict, Any, Iterable, BinaryIO
 from intelmq_api.config import Config
 
 
-BOT_CONFIG_CHARS = set(string.ascii_letters + string.digits + string.punctuation
-                       + " \n\r\t")
-
-
-class SaveFileException(Exception):
-
-    """Exception thrown for errors/invalid input in save_file"""
-
-
 def path_starts_with(path: PurePath, prefix: PurePath) -> bool:
     """Return whether the path starts with prefix.
 
@@ -51,33 +42,8 @@ class FileAccess:
     def __init__(self, config: Config):
         self.allowed_path = config.allowed_path
 
-        self.writable_files = {
-            'defaults': Path('/opt/intelmq/etc/defaults.conf'),
-            'pipeline': Path('/opt/intelmq/etc/pipeline.conf'),
-            'runtime': Path('/opt/intelmq/etc/runtime.conf'),
-            'positions': Path('/opt/intelmq/etc/manager/positions.conf'),
-            } # type: Dict[str, Path]
-
-        self.readonly_files = {
-            'harmonization': Path('/opt/intelmq/etc/harmonization.conf'),
-            } # type: Dict[str, Path]
-
-    def update_from_runctl(self, paths: Dict[str, str]):
-        self.writable_files["defaults"] = Path(paths["DEFAULTS_CONF_FILE"])
-        self.writable_files["pipeline"] = Path(paths["PIPELINE_CONF_FILE"])
-        self.writable_files["runtime"] = Path(paths["RUNTIME_CONF_FILE"])
-        self.writable_files["positions"] = Path(paths["CONFIG_DIR"]
-                                                + "/manager/positions.conf")
-        self.readonly_files["harmonization"] = Path(paths["HARMONIZATION_CONF_FILE"])
-
     def file_name_allowed(self, filename: str) -> Optional[Tuple[bool, Path]]:
         """Determine wether the API should allow access to a file."""
-        predefined = self.writable_files.get(filename)
-        if predefined is None:
-            predefined = self.readonly_files.get(filename)
-        if predefined is not None:
-            return (True, predefined)
-
         resolved = Path(filename).resolve()
         if not path_starts_with(resolved, self.allowed_path):
             return None
@@ -114,34 +80,3 @@ class FileAccess:
                 obj = {"size": stat.st_size, "path": str(path.resolve())}
             result["files"][path.name] = obj
         return (content_type, result)
-
-    def save_file(self, unvalidated_filename: str, contents: str) -> None:
-        target_path = self.writable_files.get(unvalidated_filename)
-        if target_path is None:
-            raise SaveFileException("Invalid filename: {!r}"
-                                    .format(unvalidated_filename))
-
-        try:
-            parsed = json.loads(contents)
-        except json.JSONDecodeError as e:
-            raise SaveFileException("File contents for {!r} are not JSON: {}"
-                                    .format(unvalidated_filename, str(e)))
-        if not isinstance(parsed, dict):
-            raise SaveFileException("File must contain a JSON object.")
-
-        if unvalidated_filename not in ("defaults", "positions"):
-            for key in parsed.keys():
-                if key != "__default__" and re.search("[^A-Za-z0-9.-]", key):
-                    raise SaveFileException("Invalid bot ID: {!r}".format(key))
-
-        if not set(contents) < BOT_CONFIG_CHARS:
-            raise SaveFileException("Config has invalid characters");
-
-
-        old_contents = target_path.read_text()
-        if contents != old_contents:
-            try:
-                target_path.write_text(contents, encoding="utf-8")
-            except IOError:
-                # TODO: log details of this error
-                raise SaveFileException("Could not write file.")
