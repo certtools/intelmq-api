@@ -13,6 +13,7 @@ IntelMQ-Manager. The logic itself is in the runctl & files modules.
 
 import sys
 import os
+import pathlib
 import string
 import typing
 
@@ -23,6 +24,7 @@ import intelmq_api.files as files
 import intelmq_api.config
 import intelmq_api.session as session
 
+from intelmq.lib import utils  # type: ignore
 
 Levels = hug.types.OneOf(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL",
                           "ALL"])
@@ -73,7 +75,6 @@ def initialize_api(config: intelmq_api.config.Config) -> None:
 
     runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
     file_access = files.FileAccess(api_config)
-    file_access.update_from_runctl(runner.get_paths())
 
     session_file = api_config.session_store
     if session_file is not None:
@@ -181,18 +182,6 @@ def config(response, file: str, fetch: bool=False):
     return contents
 
 
-@hug.post("/api/save", parse_body=True,
-          inputs={"application/x-www-form-urlencoded": hug.input_format.text},
-          requires=token_authentication, versions=1)
-def save(body, file: str):
-    global file_access
-    try:
-        file_access.save_file(file, body)
-        return "success"
-    except files.SaveFileException as e:
-        return str(e)
-
-
 @hug.post("/api/login", versions=1)
 def login(username: str, password: str):
     if session_store is not None:
@@ -203,3 +192,41 @@ def login(username: str, password: str):
                     "username": username,
                     }
     return "Invalid username and/or password"
+
+
+@hug.get("/api/harmonization", requires=token_authentication, versions=1)
+def get_harmonization():
+    positions = pathlib.Path('/opt/intelmq/etc/harmonization.conf')
+    paths = runner.get_paths()
+    if 'CONFIG_DIR' in paths:
+        positions = pathlib.Path(paths['CONFIG_DIR']) / 'harmonization.conf'
+    return positions.read_text()
+
+
+@hug.get("/api/runtime", requires=token_authentication, versions=1)
+def get_runtime():
+    return utils.get_runtime()
+
+
+@hug.post("/api/runtime", requires=token_authentication, version=1)
+def post_runtime(body):
+    return utils.set_runtime(body)
+
+
+@hug.get("/api/positions", requires=token_authentication, versions=1)
+def get_positions():
+    positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
+    paths = runner.get_paths()
+    if 'CONFIG_DIR' in paths:
+        positions = pathlib.Path(paths['CONFIG_DIR']) / 'manager/positions.conf'
+    return positions.read_text()
+
+
+@hug.post("/api/positions", requires=token_authentication, version=1)
+def post_positions(body):
+    positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
+    paths = runner.get_paths()
+    if 'CONFIG_DIR' in paths:
+        positions = pathlib.Path(paths['CONFIG_DIR']) / 'manager/positions.conf'
+    positions.write_text(body)
+    return positions.read_text()
