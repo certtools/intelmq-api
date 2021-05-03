@@ -11,6 +11,7 @@ This module implements the HTTP part of the API backend of
 IntelMQ-Manager. The logic itself is in the runctl & files modules.
 """
 
+import json
 import sys
 import os
 import pathlib
@@ -196,11 +197,15 @@ def login(username: str, password: str):
 
 @hug.get("/api/harmonization", requires=token_authentication, versions=1)
 def get_harmonization():
-    positions = pathlib.Path('/opt/intelmq/etc/harmonization.conf')
+    harmonization = pathlib.Path('/opt/intelmq/etc/harmonization.conf')
     paths = runner.get_paths()
     if 'CONFIG_DIR' in paths:
-        positions = pathlib.Path(paths['CONFIG_DIR']) / 'harmonization.conf'
-    return positions.read_text()
+        harmonization = pathlib.Path(paths['CONFIG_DIR']) / 'harmonization.conf'
+    try:
+        return json.loads(harmonization.read_text())
+    except OSError as e:
+        print(f"Could not read {harmonization}: {str(e)}")
+        return {}
 
 
 @hug.get("/api/runtime", requires=token_authentication, versions=1)
@@ -219,7 +224,11 @@ def get_positions():
     paths = runner.get_paths()
     if 'CONFIG_DIR' in paths:
         positions = pathlib.Path(paths['CONFIG_DIR']) / 'manager/positions.conf'
-    return positions.read_text()
+    try:
+        return json.loads(positions.read_text())
+    except OSError as e:
+        print(f"Could not read {positions}: {str(e)}")
+        return {}
 
 
 @hug.post("/api/positions", requires=token_authentication, version=1)
@@ -228,5 +237,10 @@ def post_positions(body):
     paths = runner.get_paths()
     if 'CONFIG_DIR' in paths:
         positions = pathlib.Path(paths['CONFIG_DIR']) / 'manager/positions.conf'
-    positions.write_text(body)
-    return positions.read_text()
+    try:
+        positions.parent.mkdir(exist_ok=True)
+        positions.write_text(json.dumps(body, indent=4))
+        return json.loads(positions.read_text())
+    except OSError as e:
+        print(f"Error creating {positions.parent} or writing to {positions}: {str(e)}")
+        return {}
