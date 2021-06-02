@@ -215,7 +215,12 @@ def get_runtime():
 
 @hug.post("/api/runtime", requires=token_authentication, version=1)
 def post_runtime(body):
-    return utils.set_runtime(body)
+    try:
+        utils.set_runtime(body)
+        return "success"
+    except Exception as e:
+        print(f"Could not write runtime {str(e)}")
+        return str(e)
 
 
 @hug.get("/api/positions", requires=token_authentication, versions=1)
@@ -240,7 +245,7 @@ def post_positions(body):
     try:
         positions.parent.mkdir(exist_ok=True)
         positions.write_text(json.dumps(body, indent=4))
-        return json.loads(positions.read_text())
+        return "success"
     except OSError as e:
         print(f"Error creating {positions.parent} or writing to {positions}: {str(e)}")
-        return {}
+        return str(e)
