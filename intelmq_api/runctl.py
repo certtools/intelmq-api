@@ -121,7 +121,7 @@ class RunIntelMQCtl:
     def version(self) -> Dict[str, str]:
         intelmq_version = self._run_str(["--version"]).strip()
         return {"intelmq": intelmq_version,
-                "intelmq-manager": __version__,
+                "intelmq-api": __version__,
                 }
 
     def check(self) -> JSONFile:

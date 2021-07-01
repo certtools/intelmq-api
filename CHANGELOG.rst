@@ -31,6 +31,8 @@ CHANGELOG
   content of the files first has to converted to a JSON object.
   This commit also implements simple error handling in case the files do
   not exists or can not be created.
+- The version API-endpoint now correctly reports the version of IntelMQ API
+  as ``intelmq-api``, not as ``intelmq-manager`` (by Sebastian Wagner).
 
 
 2.3.1 (2021-03-25)
