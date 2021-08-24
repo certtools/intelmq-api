@@ -185,14 +185,17 @@ def config(response, file: str, fetch: bool=False):
 
 @hug.post("/api/login", versions=1)
 def login(username: str, password: str):
-    if session_store is not None:
+    if session_store is None:
+        return {"error": "Session store is disabled by configuration! No login possible and required."}
+    else:
         known = session_store.verify_user(username, password)
         if known is not None:
             token = session_store.new_session({"username": username})
             return {"login_token": token,
                     "username": username,
                     }
-    return "Invalid username and/or password"
+        else:
+            return {"error": "Invalid username and/or password."}
 
 
 @hug.get("/api/harmonization", requires=token_authentication, versions=1)

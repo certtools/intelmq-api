@@ -8,7 +8,7 @@ CHANGELOG
 
 3.0.1 (unreleased)
 ------------------
-
+- Return a matching error message if the session storage is disabled and therefore a login is not possible (PR#36 by Sebastian Wagner, fixes #35).
 
 3.0.0 (2021-07-07)
 ------------------
