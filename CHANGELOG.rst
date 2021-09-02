@@ -6,9 +6,14 @@ CHANGELOG
 =========
 
 
-3.0.1 (unreleased)
+3.0.1 (2021-09-02)
 ------------------
 - Return a matching error message if the session storage is disabled and therefore a login is not possible (PR#36 by Sebastian Wagner, fixes #35).
+
+Known issues
+^^^^^^^^^^^^
+
+- Monitor: Loading referenced configuration files causes 500 fails if file does not exist (#37).
 
 3.0.0 (2021-07-07)
 ------------------
