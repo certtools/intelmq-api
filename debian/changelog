@@ -1,3 +1,9 @@
+intelmq-api (3.1.0~rc) stable; urgency=medium
+
+  * No changes. Just keeping version numbers in sync.
+
+ -- Sebastian Wagner <sebix@sebix.at>  Tue, 02 Aug 2022 18:32:58 +0200
+
 intelmq-api (3.0.1-1) stable; urgency=medium
 
   * Update to 3.0.1.

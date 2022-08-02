@@ -1,9 +1,15 @@
 .. 
-   SPDX-FileCopyrightText: 2020-2021 Birger Schacht, Sebastian Wagner
+   SPDX-FileCopyrightText: 2020-2022 Birger Schacht, Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
 CHANGELOG
 =========
+
+
+3.1.0 RC (2022-08-02)
+---------------------
+
+No changes. Just keeping version numbers in sync.
 
 
 3.0.1 (2021-09-02)
