@@ -19,7 +19,7 @@ import getpass
 import os
 import sys
 
-import hug # type: ignore
+import hug  # type: ignore
 
 import intelmq_api.api
 import intelmq_api.config
@@ -29,6 +29,7 @@ api_config: intelmq_api.config.Config = intelmq_api.config.Config(os.environ.get
 
 api = hug.API(__name__)
 api.http.add_middleware(hug.middleware.CORSMiddleware(api, allow_origins=api_config.allow_origins))
+
 
 @hug.extend_api()
 def add_api():
@@ -53,8 +54,7 @@ def add_user(username: str, password: str = None):
         exit(1)
 
     session_store = intelmq_api.session.SessionStore(str(api_config.session_store),
-                                         api_config.session_duration)
-
+                                                     api_config.session_duration)
 
     if password is None:
         password = getpass.getpass()

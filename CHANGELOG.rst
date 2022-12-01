@@ -5,6 +5,17 @@
 CHANGELOG
 =========
 
+3.1.0 RC2 (unreleased)
+----------------------
+
+**Removed:**
+
+- Removed support for Python 3.6.
+
+**Added:**
+
+- Added code style checks to CI.
+
 
 3.1.0 RC (2022-08-02)
 ---------------------

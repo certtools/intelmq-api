@@ -12,8 +12,6 @@ IntelMQ-Manager. The logic itself is in the runctl & files modules.
 """
 
 import json
-import sys
-import os
 import pathlib
 import string
 import typing
@@ -39,6 +37,8 @@ Pages = hug.types.OneOf(["configs", "management", "monitor", "check", "about",
 
 
 ID_CHARS = set(string.ascii_letters + string.digits + "-")
+
+
 @hug.type(extend=hug.types.Text)
 def ID(value):
     if not set(value) < ID_CHARS:
@@ -101,7 +101,9 @@ def verify_token(token):
     else:
         return None
 
+
 hug_token_authentication = hug.authentication.token(verify_token)
+
 
 def token_authentication(*args, **kw):
     if session_store is not None:
@@ -172,7 +174,7 @@ def debug():
 
 
 @hug.get("/api/config", requires=token_authentication, versions=1)
-def config(response, file: str, fetch: bool=False):
+def config(response, file: str, fetch: bool = False):
     global file_access
     result = file_access.load_file_or_directory(file, fetch)
     if result is None:

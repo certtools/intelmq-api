@@ -1,0 +1,38 @@
+# Check the code style
+#
+# SPDX-FileCopyrightText: 2022 CERT.at GmbH
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: "Check the code style"
+
+on:
+  push:
+    paths-ignore:
+      - ".github/**"
+  pull_request:
+    branches: [develop, maintenance]
+    paths-ignore:
+      - ".github/**"
+
+jobs:
+  pycodestyle:
+    name: Run pycodestyle
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+          cache: "pip"
+          cache-dependency-path: setup.py
+
+      - name: Install pycodestyle
+        run: pip install pycodestyle
+
+      - name: Run pycodestyle
+        run: |
+          pycodestyle intelmq_api tests setup.py

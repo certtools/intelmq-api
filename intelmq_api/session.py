@@ -108,7 +108,6 @@ class SessionStore:
             print(f"SQLite3-Error ({exc}): Possibly missing write permissions to session file (or the folder it is located in).")
             return None
 
-
     #
     # Methods for session data
     #
