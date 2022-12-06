@@ -1,7 +1,9 @@
-""""""
+"""
+SPDX-FileCopyrightText: 2022 CERT.at GmbH <https://cert.at>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
 
 import getpass
-import os
 import sys
 from typing import Optional
 
@@ -13,11 +15,7 @@ from pprint import pprint
 
 import typer
 
-api_config: intelmq_api.config.Config = intelmq_api.config.Config(
-    os.environ.get("INTELMQ_API_CONFIG"))
-
-#api = hug.API(__name__)
-#api.http.add_middleware(hug.middleware.CORSMiddleware(api, allow_origins=api_config.allow_origins))
+from .main import config as api_config
 
 cli = typer.Typer()
 

@@ -1,1 +1,1 @@
-uvicorn intelmq_api.api:app --reload
+uvicorn intelmq_api.main:app --reload
