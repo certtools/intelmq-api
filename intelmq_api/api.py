@@ -12,196 +12,215 @@ IntelMQ-Manager. The logic itself is in the runctl & files modules.
 """
 
 import json
+import os
 import pathlib
 import string
 import typing
 
-import hug  # type: ignore
+from fastapi import (Depends, FastAPI, Header, HTTPException, Request,
+                     Response, status)
+from fastapi.responses import JSONResponse
+from intelmq.lib import utils  # type: ignore
+from pydantic import BaseModel
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from typing_extensions import Literal  # Python 3.8+
 
-import intelmq_api.runctl as runctl
-import intelmq_api.files as files
 import intelmq_api.config
+import intelmq_api.files as files
+import intelmq_api.runctl as runctl
 import intelmq_api.session as session
 
-from intelmq.lib import utils  # type: ignore
+app = FastAPI()  # TODO: use blueprints?
 
-Levels = hug.types.OneOf(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL",
-                          "ALL"])
-Actions = hug.types.OneOf(["start", "stop", "restart", "reload", "status"])
-Groups = hug.types.OneOf(["collectors", "parsers", "experts", "outputs",
-                          "botnet"])
-BotCmds = hug.types.OneOf(["get", "pop", "send", "process"])
-Bool = hug.types.Mapping({"true": True, "false": False})
-Pages = hug.types.OneOf(["configs", "management", "monitor", "check", "about",
-                         "index"])
 
+Levels = Literal["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL", "ALL"]
+Actions = Literal["start", "stop", "restart", "reload", "status"]
+Groups = Literal["collectors", "parsers", "experts", "outputs", "botnet"]
+BotCmds = Literal["get", "pop", "send", "process"]
+Pages = Literal["configs", "management", "monitor", "check", "about", "index"]
 
 ID_CHARS = set(string.ascii_letters + string.digits + "-")
 
 
-@hug.type(extend=hug.types.Text)
-def ID(value):
-    if not set(value) < ID_CHARS:
-        raise ValueError("Invalid character in {!r}".format(value))
-    return value
+def ID(id: str) -> str:
+    if not set(id) < ID_CHARS:
+        raise ValueError("Invalid character in {!r}".format(id))
+    return id
 
 
-api_config: intelmq_api.config.Config
-
-runner: runctl.RunIntelMQCtl
-
-file_access: files.FileAccess
+T = typing.TypeVar("T")
 
 
-session_store = None
+class OneTimeDependency(typing.Generic[T]):
+    """Allows one-time explicit initialization of the dependency, 
+        and then returning it on every usage.
+
+        It emulates the previous behavior that used global variables"""
+
+    def __init__(self) -> None:
+        self._value: typing.Optional[T] = None
+
+    def initialize(self, value: T) -> None:
+        self._value = value
+
+    def __call__(self) -> typing.Optional[T]:
+        return self._value
 
 
-def initialize_api(config: intelmq_api.config.Config) -> None:
-    """Initialize the API, optionally loading a configuration file.
+api_config = OneTimeDependency[intelmq_api.config.Config]()
+session_store = OneTimeDependency[session.SessionStore]()
 
-    If a filename is given, this function updates the configuration in
-    the module global variable api_config by loading a new configuration
-    and assigning it to the variable.
 
-    Then, regardless of whether a filename was given, it calls the
-    update_from_runctl method of the file_access object so that it uses
-    the files that IntelMQ actually uses.
+def runner(config: intelmq_api.config.Config = Depends(api_config)):
+    return runctl.RunIntelMQCtl(config.intelmq_ctl_cmd)
 
-    Note: Because of that last step this function should always be
-    called when the server process starts even when no configuration
-    needs to be read from a file.
-    """
-    global api_config, file_access, runner, session_store
-    api_config = config
 
-    runner = runctl.RunIntelMQCtl(api_config.intelmq_ctl_cmd)
-    file_access = files.FileAccess(api_config)
+def file_access(config: intelmq_api.config.Config = Depends(api_config)):
+    return files.FileAccess(config)
 
-    session_file = api_config.session_store
+
+@app.on_event("startup")
+def startup_event():
+    config = intelmq_api.config.Config(os.environ.get("INTELMQ_API_CONFIG"))
+    api_config.initialize(config)
+    session_file = config.session_store
     if session_file is not None:
-        session_store = session.SessionStore(str(session_file),
-                                             api_config.session_duration)
+        session_store.initialize(session.SessionStore(str(session_file),
+                                                      config.session_duration))
 
 
-def cache_get(*args, **kw):
-    """Route to use instead of hug.get that sets cache headers in the response.
-    """
-    return hug.get(*args, **kw).cache(max_age=3)
+def cached_response(max_age: int):
+    """Adds the cache headers to the response"""
+    def _cached_response(response: Response):
+        response.headers["cache-control"] = f"max-age={max_age}"
+    return _cached_response
 
 
-@hug.exception(runctl.IntelMQCtlError)
-def crlerror_handler(response, exception):
-    response.status = hug.HTTP_500
-    return exception.error_dict
+cached = Depends(cached_response(max_age=3))
 
 
-def verify_token(token):
-    if session_store is not None:
-        return session_store.verify_token(token)
-    else:
-        return None
+@app.exception_handler(runctl.IntelMQCtlError)
+def crl_error_handler(request: Request, exc: runctl.IntelMQCtlError):
+    return JSONResponse(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, content=exc.error_dict)
 
 
-hug_token_authentication = hug.authentication.token(verify_token)
+@app.exception_handler(StarletteHTTPException)
+def handle_generic_error(request: Request, exc: StarletteHTTPException):
+    return JSONResponse(status_code=exc.status_code, content={"error": exc.detail})
 
 
-def token_authentication(*args, **kw):
-    if session_store is not None:
-        return hug_token_authentication(*args, **kw)
-    else:
-        return True
+# TODO: go back to the original header
+def token_authorization(auth: typing.Union[str, None] = Header(default=None),
+                        session: session.SessionStore = Depends(session_store)):
+    if session is not None:
+        if not auth or not session.verify_token(auth):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token")
 
 
-@hug.get("/api/botnet", requires=token_authentication, versions=1)
-@typing.no_type_check
-def botnet(action: Actions, group: Groups = None):
+authorized = Depends(token_authorization)
+
+
+@app.get("/api/botnet", dependencies=[authorized])
+def botnet(action: Actions, group: typing.Optional[Groups] = None, runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.botnet(action, group)
 
 
-@hug.get("/api/bot", requires=token_authentication, versions=1)
-@typing.no_type_check
-def bot(action: Actions, id: ID):
+@app.get("/api/bot", dependencies=[authorized])
+def bot(action: Actions, id: str = Depends(ID), runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.bot(action, id)
 
 
-@cache_get("/api/getlog", requires=token_authentication, versions=1)
-@typing.no_type_check
-def getlog(id: ID, lines: int, level: Levels = "DEBUG"):
+@app.get("/api/getlog", dependencies=[authorized, cached])
+def get_log(lines: int, id: str = Depends(ID), level: Levels = "DEBUG", runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.log(id, lines, level)
 
 
-@cache_get("/api/queues", requires=token_authentication, versions=1)
-def queues():
+@app.get("/api/queues", dependencies=[authorized, cached])
+def queues(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.list("queues")
 
 
-@cache_get("/api/queues-and-status", requires=token_authentication, versions=1)
-def queues_and_status():
+@app.get("/api/queues-and-status", dependencies=[authorized, cached])
+def queues_and_status(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.list("queues-and-status")
 
 
-@cache_get("/api/bots", requires=token_authentication, versions=1)
-def bots():
+@app.get("/api/bots", dependencies=[authorized, cached])
+def bots(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.list("bots")
 
 
-@hug.get("/api/version", requires=token_authentication, versions=1)
-def version(request):
+@app.get("/api/version", dependencies=[authorized], response_model=typing.Dict)
+def version(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.version()
 
 
-@hug.get("/api/check", requires=token_authentication, versions=1)
-def check():
+@app.get("/api/check", dependencies=[authorized])
+def check(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.check()
 
 
-@hug.get("/api/clear", requires=token_authentication, versions=1)
-@typing.no_type_check
-def clear(id: ID):
+@app.get("/api/clear", dependencies=[authorized])
+def clear(id: str = Depends(ID), runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.clear(id)
 
 
-@hug.post("/api/run", requires=token_authentication, versions=1)
-@typing.no_type_check
-def run(bot: str, cmd: BotCmds, show: Bool = False, dry: Bool = False,
-        msg: str = ""):
+# TODO: Model!
+@app.post("/api/run", dependencies=[authorized], response_model=str)
+def run(bot: str, cmd: BotCmds, show: bool = False, dry: bool = False,
+        msg: str = "", runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.run(bot, cmd, show, dry, msg)
 
 
-@hug.get("/api/debug", requires=token_authentication, versions=1)
-def debug():
+@app.get("/api/debug", dependencies=[authorized])
+def debug(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.debug()
 
 
-@hug.get("/api/config", requires=token_authentication, versions=1)
-def config(response, file: str, fetch: bool = False):
-    global file_access
+@app.get("/api/config", dependencies=[authorized])
+def config(response: Response, file: str, fetch: bool = False,
+           file_access: files.FileAccess = Depends(file_access)):
     result = file_access.load_file_or_directory(file, fetch)
     if result is None:
         return ["Unknown resource"]
 
     content_type, contents = result
-    response.content_type = content_type
+    response.headers["content-type"] = content_type
     return contents
 
 
-@hug.post("/api/login", versions=1)
-def login(username: str, password: str):
-    if session_store is None:
-        return {"error": "Session store is disabled by configuration! No login possible and required."}
+class LoginForm(BaseModel):
+    username: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    login_token: str
+    username: str
+
+
+@app.post("/api/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
+def login(login_form: LoginForm, session: session.SessionStore = Depends(session_store)):
+    username, password = login_form.username, login_form.password
+    if session is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Session store is disabled by configuration! No login possible and required.",
+        )
     else:
-        known = session_store.verify_user(username, password)
+        known = session.verify_user(username, password)
         if known is not None:
-            token = session_store.new_session({"username": username})
+            token = session.new_session({"username": username})
             return {"login_token": token,
                     "username": username,
                     }
         else:
-            return {"error": "Invalid username and/or password."}
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                                detail="Invalid username and/or password.")
 
 
-@hug.get("/api/harmonization", requires=token_authentication, versions=1)
-def get_harmonization():
+@app.get("/api/harmonization", dependencies=[authorized], response_model=typing.Dict)
+def get_harmonization(runner: runctl.RunIntelMQCtl = Depends(runner)):
     harmonization = pathlib.Path('/opt/intelmq/etc/harmonization.conf')
     paths = runner.get_paths()
     if 'CONFIG_DIR' in paths:
@@ -213,13 +232,13 @@ def get_harmonization():
         return {}
 
 
-@hug.get("/api/runtime", requires=token_authentication, versions=1)
+@app.get("/api/runtime", dependencies=[authorized], response_model=typing.Dict)
 def get_runtime():
     return utils.get_runtime()
 
 
-@hug.post("/api/runtime", requires=token_authentication, version=1)
-def post_runtime(body):
+@app.post("/api/runtime", dependencies=[authorized], response_model=str)
+def post_runtime(body: dict):
     try:
         utils.set_runtime(body)
         return "success"
@@ -228,8 +247,8 @@ def post_runtime(body):
         return str(e)
 
 
-@hug.get("/api/positions", requires=token_authentication, versions=1)
-def get_positions():
+@app.get("/api/positions", dependencies=[authorized], response_model=typing.Dict)
+def get_positions(runner: runctl.RunIntelMQCtl = Depends(runner)):
     positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
     paths = runner.get_paths()
     if 'CONFIG_DIR' in paths:
@@ -241,8 +260,8 @@ def get_positions():
         return {}
 
 
-@hug.post("/api/positions", requires=token_authentication, version=1)
-def post_positions(body):
+@app.post("/api/positions", dependencies=[authorized], response_model=typing.Dict)
+def post_positions(body: dict, runner: runctl.RunIntelMQCtl = Depends(runner)):
     positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
     paths = runner.get_paths()
     if 'CONFIG_DIR' in paths:

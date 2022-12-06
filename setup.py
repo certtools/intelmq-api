@@ -11,10 +11,11 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 REQUIREMENTS = [
-    "hug>=2.3.0",
     "intelmq>=2.2.3",
     "fastapi>=0.88.0",
-    "uvicorn[standard]>=0.20.0"
+    "uvicorn[standard]>=0.20.0",
+    "typing-extensions>=3.10.0.0",
+    "typer>=0.7.0",
 ]
 
 DEV_TOOLS = [
