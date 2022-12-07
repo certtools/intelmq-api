@@ -3,6 +3,9 @@
 SPDX-FileCopyrightText: 2020 Birger Schacht
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
+
+# TODO: Update or replace to work with the FastAPI
+
 import os
 
 def application (environ, start_response):

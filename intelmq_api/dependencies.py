@@ -1,4 +1,5 @@
-"""
+"""Dependencies of the API endpoints, in the FastAPI style
+
 SPDX-FileCopyrightText: 2022 CERT.at GmbH <https://cert.at>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
@@ -49,6 +50,8 @@ def token_authorization(authorization: typing.Union[str, None] = Header(default=
 
 
 def startup(config: intelmq_api.config.Config):
+    """A starting point to one-time initialization of necessary dependencies. This needs to
+        be called by the application on the startup."""
     api_config.initialize(config)
     session_file = config.session_store
     if session_file is not None:

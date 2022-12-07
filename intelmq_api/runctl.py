@@ -51,7 +51,7 @@ failure_tips = [
      " && sudo chmod u+rw /opt/intelmq -R</code>"),
     ("sqlite3.OperationalError: no such table",
      "SQLite database may not have been"
-     " <a href='https://github.com/certtools/intelmq/blob/develop/docs/Bots.md#sqlite'>initialized</a>.")
+     " <a href='https://github.com/certtools/intelmq/blob/develop/docs/Bots.md#sqlite'>initialized</a>.")  # noqa
 ]
 
 

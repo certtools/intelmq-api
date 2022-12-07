@@ -1,4 +1,5 @@
-"""
+"""Exception handlers for API
+
 SPDX-FileCopyrightText: 2022 CERT.at GmbH <https://cert.at>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
@@ -19,5 +20,6 @@ def handle_generic_error(request: Request, exc: StarletteHTTPException):
 
 
 def register(app: FastAPI):
+    """A hook to register handlers in the app. Need to be called before startup"""
     app.add_exception_handler(runctl.IntelMQCtlError, ctl_error_handler)
     app.add_exception_handler(StarletteHTTPException, handle_generic_error)

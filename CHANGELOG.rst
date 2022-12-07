@@ -11,10 +11,25 @@ CHANGELOG
 **Removed:**
 
 - Removed support for Python 3.6.
+- Removed duplication of the CLI commands. Adding users could be done now only by using `scripts/intelmq-api-adduser`
 
 **Added:**
 
 - Added code style checks to CI.
+- Added interactive API documentation available at `/docs` endpoint.
+- Added the line length limit in Python files as 100 chars.
+
+**Changed:**
+
+- The base API framework was changed from hug to the FastAPI. All endpoints were rewritten to use it
+  and the structure of the files were changed to better align with the FastAPI concepts.
+- The startup point of the application is now `intelmq_api.main:app`
+
+**Known issues:**
+
+- The packaging isn't yet prepared to work with FastAPI-based API.
+- The recommended Apache configuration doesn't support the FastAPI-based version yet.
+- The documentation is not updated yet.
 
 
 3.1.0 RC (2022-08-02)

@@ -15,7 +15,6 @@ REQUIREMENTS = [
     "fastapi>=0.88.0",
     "uvicorn[standard]>=0.20.0",
     "typing-extensions>=3.10.0.0",
-    "typer>=0.7.0",
 ]
 
 DEV_TOOLS = [
@@ -37,7 +36,8 @@ setuptools.setup(
     description="Intelmq-API is a hug based API to intelmq,"
                 " a solution for IT security teams for collecting"
                 " and processing security feeds",
-    data_files=[('/etc/intelmq', ['contrib/api-config.json', 'contrib/api-apache.conf', 'contrib/api-sudoers.conf']),
+    data_files=[('/etc/intelmq', ['contrib/api-config.json', 'contrib/api-apache.conf',
+                                  'contrib/api-sudoers.conf']),
                 ('/etc/intelmq/manager', ['contrib/positions.conf'])],
     package_data={'intelmq_api': ['intelmq-api.wsgi']},
     scripts=['scripts/intelmq-api-adduser']
