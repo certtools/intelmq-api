@@ -25,6 +25,7 @@ def init_app():
     intelmq_api.dependencies.startup(config)
 
 
-app.add_middleware(CORSMiddleware, allow_origins=config.allow_origins)
+app.add_middleware(CORSMiddleware, allow_origins=config.allow_origins,
+                   allow_methods=("GET", "POST"))
 app.include_router(api, prefix="/v1")
 intelmq_api.exceptions.register(app)
