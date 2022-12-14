@@ -17,6 +17,7 @@ import string
 import typing
 
 from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi.responses import JSONResponse
 from intelmq.lib import utils  # type: ignore
 from pydantic import BaseModel
 from typing_extensions import Literal  # Python 3.8+
@@ -26,7 +27,8 @@ import intelmq_api.files as files
 import intelmq_api.runctl as runctl
 import intelmq_api.session as session
 
-from .dependencies import api_config, cached_response, session_store, token_authorization
+from .dependencies import (api_config, cached_response, session_store,
+                           token_authorization)
 
 api = APIRouter()
 
@@ -76,51 +78,58 @@ class TokenResponse(BaseModel):
     username: str
 
 
+class JSONFileResponse(JSONResponse):
+    """Directly pass JSONFile (bytes string) to the response"""
+
+    def render(self, content: runctl.JSONFile) -> bytes:
+        return content.getvalue()
+
+
 @api.get("/api/botnet", dependencies=[authorized])
 def botnet(action: Actions, group: typing.Optional[Groups] = None,
            runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.botnet(action, group)
+    return JSONFileResponse(runner.botnet(action, group))
 
 
 @api.get("/api/bot", dependencies=[authorized])
 def bot(action: Actions, id: str = Depends(ID), runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.bot(action, id)
+    return JSONFileResponse(runner.bot(action, id))
 
 
 @api.get("/api/getlog", dependencies=[authorized, cached])
 def get_log(lines: int, id: str = Depends(ID), level: Levels = "DEBUG",
             runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.log(id, lines, level)
+    return JSONFileResponse(runner.log(id, lines, level))
 
 
 @api.get("/api/queues", dependencies=[authorized, cached])
 def queues(runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.list("queues")
+    return JSONFileResponse(runner.list("queues"))
 
 
 @api.get("/api/queues-and-status", dependencies=[authorized, cached])
 def queues_and_status(runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.list("queues-and-status")
+    return JSONFileResponse(runner.list("queues-and-status"))
 
 
 @api.get("/api/bots", dependencies=[authorized, cached])
 def bots(runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.list("bots")
+    return JSONFileResponse(runner.list("bots"))
 
 
-@api.get("/api/version", dependencies=[authorized], response_model=typing.Dict)
+@api.get("/api/version", dependencies=[authorized], response_model=dict)
 def version(runner: runctl.RunIntelMQCtl = Depends(runner)):
     return runner.version()
 
 
 @api.get("/api/check", dependencies=[authorized])
 def check(runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.check()
+    return JSONFileResponse(runner.check())
 
 
 @api.get("/api/clear", dependencies=[authorized])
 def clear(id: str = Depends(ID), runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.clear(id)
+    return JSONFileResponse(runner.clear(id))
 
 
 @api.post("/api/run", dependencies=[authorized], response_model=str)
@@ -130,19 +139,18 @@ def run(command: RunRequest, runner: runctl.RunIntelMQCtl = Depends(runner)):
 
 @api.get("/api/debug", dependencies=[authorized])
 def debug(runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.debug()
+    return JSONFileResponse(runner.debug())
 
 
 @api.get("/api/config", dependencies=[authorized])
-def config(response: Response, file: str, fetch: bool = False,
+def config(file: str, fetch: bool = False,
            file_access: files.FileAccess = Depends(file_access)):
     result = file_access.load_file_or_directory(file, fetch)
     if result is None:
         return ["Unknown resource"]
 
     content_type, contents = result
-    response.headers["content-type"] = content_type
-    return contents
+    return Response(contents, headers={"content-type": content_type})
 
 
 @api.post("/api/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
@@ -165,7 +173,7 @@ def login(login_form: LoginForm, session: session.SessionStore = Depends(session
                                 detail="Invalid username and/or password.")
 
 
-@api.get("/api/harmonization", dependencies=[authorized], response_model=typing.Dict)
+@api.get("/api/harmonization", dependencies=[authorized], response_model=dict)
 def get_harmonization(runner: runctl.RunIntelMQCtl = Depends(runner)):
     harmonization = pathlib.Path('/opt/intelmq/etc/harmonization.conf')
     paths = runner.get_paths()
@@ -178,7 +186,7 @@ def get_harmonization(runner: runctl.RunIntelMQCtl = Depends(runner)):
         return {}
 
 
-@api.get("/api/runtime", dependencies=[authorized], response_model=typing.Dict)
+@api.get("/api/runtime", dependencies=[authorized], response_model=dict)
 def get_runtime():
     return utils.get_runtime()
 
@@ -193,7 +201,7 @@ def post_runtime(body: dict):
         return str(e)
 
 
-@api.get("/api/positions", dependencies=[authorized], response_model=typing.Dict)
+@api.get("/api/positions", dependencies=[authorized], response_model=dict)
 def get_positions(runner: runctl.RunIntelMQCtl = Depends(runner)):
     positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
     paths = runner.get_paths()

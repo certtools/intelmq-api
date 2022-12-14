@@ -18,7 +18,8 @@ REQUIREMENTS = [
 ]
 
 DEV_TOOLS = [
-    "pycodestyle>=2.10.0"
+    "pycodestyle>=2.10.0",
+    "httpx",
 ]
 
 setuptools.setup(
