@@ -79,10 +79,10 @@ class TokenResponse(BaseModel):
 
 
 class JSONFileResponse(JSONResponse):
-    """Directly pass JSONFile (bytes string) to the response"""
+    """Directly pass JSONFile (bytes) with the correct content type to the response"""
 
     def render(self, content: runctl.JSONFile) -> bytes:
-        return content.getvalue()
+        return content
 
 
 @api.get("/api/botnet", dependencies=[authorized])
