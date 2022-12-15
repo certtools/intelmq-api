@@ -1,3 +1,9 @@
+"""Basic tests for the API endpoints
+
+SPDX-FileCopyrightText: 2022 CERT.at Gmbh <https://cert.at/>
+SPDX-License-Identifier: AGPL-3.0-or-later
+"""
+
 import subprocess
 from typing import List
 from unittest import TestCase
