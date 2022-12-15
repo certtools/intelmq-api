@@ -16,7 +16,7 @@ import pathlib
 import string
 import typing
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status, Query, Form, Body
 from fastapi.responses import JSONResponse
 from intelmq.lib import utils  # type: ignore
 from pydantic import BaseModel
@@ -58,14 +58,6 @@ def file_access(config: intelmq_api.config.Config = Depends(api_config)):
 
 cached = Depends(cached_response(max_age=3))
 authorized = Depends(token_authorization)
-
-
-class RunRequest(BaseModel):
-    bot: str
-    cmd: BotCmds
-    show: bool = False
-    dry: bool = False
-    msg: str = ""
 
 
 class LoginForm(BaseModel):
@@ -133,8 +125,9 @@ def clear(id: str = Depends(ID), runner: runctl.RunIntelMQCtl = Depends(runner))
 
 
 @api.post("/api/run", dependencies=[authorized], response_model=str)
-def run(command: RunRequest, runner: runctl.RunIntelMQCtl = Depends(runner)):
-    return runner.run(command.bot, command.cmd, command.show, command.dry, command.msg)
+def run(bot: str, cmd: BotCmds, show: bool = False, dry: bool = False, msg: str = Form(default=""),
+        runner: runctl.RunIntelMQCtl = Depends(runner)):
+    return runner.run(bot, cmd, show, dry, msg)
 
 
 @api.get("/api/debug", dependencies=[authorized])

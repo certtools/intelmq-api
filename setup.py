@@ -15,6 +15,7 @@ REQUIREMENTS = [
     "fastapi>=0.88.0",
     "uvicorn[standard]>=0.20.0",
     "typing-extensions>=3.10.0.0",
+    "python-multipart",
 ]
 
 DEV_TOOLS = [

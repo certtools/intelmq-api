@@ -60,3 +60,9 @@ class TestApi(TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertIsInstance(response.json(), dict)
                 self.assertEqual(response.json(), {"some": "json"})
+
+    def test_run_input(self):
+        response = self.client.post(
+            "/v1/api/run?bot=feodo-tracker-browse-parser&cmd=get&dry=false&show=false",
+            data={"msg": "some message"})
+        self.assertEqual(response.status_code, 200)
