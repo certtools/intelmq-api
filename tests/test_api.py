@@ -4,11 +4,15 @@ SPDX-FileCopyrightText: 2022 CERT.at Gmbh <https://cert.at/>
 SPDX-License-Identifier: AGPL-3.0-or-later
 """
 
+import json
+import os
 import subprocess
-from typing import List
-from unittest import TestCase
+from tempfile import TemporaryDirectory
+from typing import List, Optional
+from unittest import TestCase, mock
 
 from fastapi.testclient import TestClient
+from intelmq.lib import utils
 
 from intelmq_api import dependencies
 from intelmq_api.api import runner
@@ -25,20 +29,33 @@ class DummyConfig(Config):
 
 
 class DummyRunner(RunIntelMQCtl):
+
+    def __init__(self, base_cmd, paths: Optional[dict] = None):
+        super().__init__(base_cmd)
+        self._paths = paths
+
     def _run_intelmq_ctl(self, args: List[str]) -> subprocess.CompletedProcess:
         # simulate dummy response from the CLI command
         return subprocess.CompletedProcess(args, 0, b'{"some": "json"}')
 
+    def get_paths(self) -> dict[str, str]:
+        if self._paths is None:
+            return super().get_paths()
+        else:
+            return self._paths
 
-def dummy_runner():
-    return DummyRunner([])
+
+def get_dummy_reader(**kwargs):
+    def dummy_runner():
+        return DummyRunner([], **kwargs)
+    return dummy_runner
 
 
-class TestApi(TestCase):
+class TestApiWithCLI(TestCase):
     def setUp(self) -> None:
         self.client = TestClient(app=app)
         dependencies.startup(DummyConfig())
-        app.dependency_overrides[runner] = dummy_runner
+        app.dependency_overrides[runner] = get_dummy_reader()
 
     def tearDown(self) -> None:
         app.dependency_overrides = {}
@@ -66,3 +83,85 @@ class TestApi(TestCase):
             "/v1/api/run?bot=feodo-tracker-browse-parser&cmd=get&dry=false&show=false",
             data={"msg": "some message"})
         self.assertEqual(response.status_code, 200)
+
+
+class TestApiWithDir(TestCase):
+    def setUp(self) -> None:
+        self.client = TestClient(app=app)
+        dependencies.startup(DummyConfig())
+        self.conf_dir = TemporaryDirectory()
+        app.dependency_overrides[runner] = get_dummy_reader(
+            paths={"CONFIG_DIR": self.conf_dir.name})
+
+        self.save_runtime()
+        self.save_positions()
+
+        self.path_patcher = mock.patch(
+            "intelmq.lib.utils.RUNTIME_CONF_FILE", f"{self.conf_dir.name}/runtime.yaml")
+        self.path_patcher.start()
+
+    def save_runtime(self):
+        with open(f"{self.conf_dir.name}/runtime.yaml", "w+") as f:
+            json.dump({}, f)
+
+    def save_positions(self):
+        os.makedirs(f"{self.conf_dir.name}/manager", exist_ok=True)
+        with open(f"{self.conf_dir.name}/manager/positions.conf", "w+") as f:
+            json.dump({}, f)
+
+    def tearDown(self) -> None:
+        app.dependency_overrides = {}
+        self.path_patcher.stop()
+        self.conf_dir.cleanup()
+
+    def test_handle_path_with_doubled_slashes(self):
+        """The IntelMQ Manager doubles slashes in some paths, but FastAPI doesn't handle it.
+
+        In addition, IntelMQ Manager doesn't respect redirection. As so, keeping the invalid
+        paths for backward compatibility."""
+        PATHS = ["/v1/api//runtime", "/v1/api//positions"]
+        for path in PATHS:
+            with self.subTest(path):
+                response = self.client.post(path, json={})
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual(response.text, "success")
+
+    def test_post_runtime(self):
+        data = {
+            "some-bot": {
+                "bot_id": "bot-1",
+                "description": "Test",
+                "enabled": True,
+                "parameters": {
+                    "destination_queues": {
+                        "_default": [
+                            "file-output-queue"
+                        ]
+                    },
+                    "overwrite": True,
+                },
+                "run_mode": "continuous"
+            }
+        }
+        response = self.client.post("/v1/api/runtime", json=data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.text, "success")
+
+        self.assertEqual(utils.get_runtime(), data)
+
+    def test_post_positions(self):
+        data = {
+            "some-bot": {
+                "x": 21,
+                "y": 314
+            }
+        }
+        response = self.client.post("/v1/api/positions", json=data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.text, "success")
+
+        with open(f"{self.conf_dir.name}/manager/positions.conf", "r") as f:
+            saved = json.load(f)
+        self.assertEqual(saved, data)

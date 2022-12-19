@@ -16,8 +16,8 @@ import pathlib
 import string
 import typing
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status, Query, Form, Body
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Form, HTTPException, Response, status
+from fastapi.responses import JSONResponse, PlainTextResponse
 from intelmq.lib import utils  # type: ignore
 from pydantic import BaseModel
 from typing_extensions import Literal  # Python 3.8+
@@ -184,7 +184,11 @@ def get_runtime():
     return utils.get_runtime()
 
 
-@api.post("/api/runtime", dependencies=[authorized], response_model=str)
+@api.post("/api//runtime", dependencies=[authorized], response_model=str, deprecated=True,
+          description="Invalid path for compatibility with older IntelMQ Manager versions",
+          response_class=PlainTextResponse)
+@api.post("/api/runtime", dependencies=[authorized], response_model=str,
+          response_class=PlainTextResponse)
 def post_runtime(body: dict):
     try:
         utils.set_runtime(body)
@@ -207,7 +211,11 @@ def get_positions(runner: runctl.RunIntelMQCtl = Depends(runner)):
         return {}
 
 
-@api.post("/api/positions", dependencies=[authorized], response_model=str)
+@api.post("/api//positions", dependencies=[authorized], response_model=str, deprecated=True,
+          description="Invalid path for compatibility with older IntelMQ Manager versions",
+          response_class=PlainTextResponse)
+@api.post("/api/positions", dependencies=[authorized], response_model=str,
+          response_class=PlainTextResponse)
 def post_positions(body: dict, runner: runctl.RunIntelMQCtl = Depends(runner)):
     positions = pathlib.Path('/opt/intelmq/etc/manager/positions.conf')
     paths = runner.get_paths()
