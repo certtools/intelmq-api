@@ -8,11 +8,11 @@ import json
 import os
 import subprocess
 from tempfile import TemporaryDirectory
-from typing import List, Optional
+from typing import Dict, List, Optional
 from unittest import TestCase, mock
 
 from fastapi.testclient import TestClient
-from intelmq.lib import utils
+from intelmq.lib import utils  # type: ignore
 
 from intelmq_api import dependencies
 from intelmq_api.api import runner
@@ -38,7 +38,7 @@ class DummyRunner(RunIntelMQCtl):
         # simulate dummy response from the CLI command
         return subprocess.CompletedProcess(args, 0, b'{"some": "json"}')
 
-    def get_paths(self) -> dict[str, str]:
+    def get_paths(self) -> Dict[str, str]:
         if self._paths is None:
             return super().get_paths()
         else:
