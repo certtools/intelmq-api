@@ -1,4 +1,4 @@
-.. 
+..
    SPDX-FileCopyrightText: 2020-2022 Birger Schacht, Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -24,12 +24,15 @@ CHANGELOG
 - The base API framework was changed from hug to the FastAPI. All endpoints were rewritten to use it
   and the structure of the files were changed to better align with the FastAPI concepts.
 - The startup point of the application is now `intelmq_api.main:app`
+- The API is no longer a WSGI app. The Debian package is updated to run Gunicorn as a server and
+  configure Apache2 as a proxy. If you had non-default configuration, please review new examples.
 
 **Known issues:**
 
 - The packaging isn't yet prepared to work with FastAPI-based API.
 - The recommended Apache configuration doesn't support the FastAPI-based version yet.
 - The documentation is not updated yet.
+- The interactive API documentation on `/docs` doesn't respect setting `Authorization` header.
 
 
 3.1.0 RC (2022-08-02)

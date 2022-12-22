@@ -17,7 +17,7 @@ from .api import api
 
 config = intelmq_api.config.Config(os.environ.get("INTELMQ_API_CONFIG"))
 
-app = FastAPI()
+app = FastAPI(root_path=os.environ.get("ROOT_PATH", ""))
 
 
 @app.on_event("startup")

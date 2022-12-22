@@ -35,12 +35,12 @@ setuptools.setup(
     extras_require={
         'dev': DEV_TOOLS,
     },
-    description="Intelmq-API is a hug based API to intelmq,"
+    description="Intelmq-API is a FastAPI based API to intelmq,"
                 " a solution for IT security teams for collecting"
                 " and processing security feeds",
     data_files=[('/etc/intelmq', ['contrib/api-config.json', 'contrib/api-apache.conf',
-                                  'contrib/api-sudoers.conf']),
+                                  'contrib/api-sudoers.conf', 'contrib/intelmq-api.service',
+                                  'contrib/intelmq-api.socket']),
                 ('/etc/intelmq/manager', ['contrib/positions.conf'])],
-    package_data={'intelmq_api': ['intelmq-api.wsgi']},
     scripts=['scripts/intelmq-api-adduser']
 )
