@@ -12,7 +12,7 @@ jobs:
     name: A build on different Debian distributions
     strategy:
       matrix:
-        codename: ['buster', 'bullseye']
+        codename: ['bullseye']  # 'buster' packaging requires building dependencies that exist for bullseye
 
     steps:
     - name: Checkout repository
