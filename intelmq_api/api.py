@@ -19,7 +19,6 @@ import typing
 from fastapi import APIRouter, Depends, Form, HTTPException, Response, status
 from fastapi.responses import JSONResponse, PlainTextResponse
 from intelmq.lib import utils  # type: ignore
-from pydantic import BaseModel
 from typing_extensions import Literal  # Python 3.8+
 
 import intelmq_api.config
@@ -29,6 +28,7 @@ import intelmq_api.session as session
 
 from .dependencies import (api_config, cached_response, session_store,
                            token_authorization)
+from .models import LoginForm, TokenResponse
 
 api = APIRouter()
 
@@ -58,16 +58,6 @@ def file_access(config: intelmq_api.config.Config = Depends(api_config)):
 
 cached = Depends(cached_response(max_age=3))
 authorized = Depends(token_authorization)
-
-
-class LoginForm(BaseModel):
-    username: str
-    password: str
-
-
-class TokenResponse(BaseModel):
-    login_token: str
-    username: str
 
 
 class JSONFileResponse(JSONResponse):
