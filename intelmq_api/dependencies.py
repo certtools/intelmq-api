@@ -46,7 +46,10 @@ def token_authorization(authorization: typing.Union[str, None] = Header(default=
                         session: session.SessionStore = Depends(session_store)):
     if session is not None:
         if not authorization or not session.verify_token(authorization):
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token")
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail={
+                                "Authentication Required":
+                                    "Please provide valid Token verification credentials"
+                                })
 
 
 def startup(config: intelmq_api.config.Config):
