@@ -1,0 +1,60 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 CERT.at GmbH <https://cert.at/>
+# SPDX-License-Identifier: AGPL-3.0-or-later
+#
+# Installation helper to configure Systemd units
+#
+# This script will:
+#   1. Get the installation path of the IntelMQ API package.
+#   2. Edit paths in default units (copied to /etc/intelmq during package installation).
+#   3. Copy unit files to the unit path.
+#   4. Enable IntelMQ units.
+# Configuring webserver can be done by using intelmqsetup command
+
+SERVICE_FILE="/etc/intelmq/intelmq-api.service"
+SOCKET_FILE="/etc/intelmq/intelmq-api.socket"
+DEFAULT_INTELMQ_API_PATH="/usr/lib/python3/dist-packages/intelmq_api"
+
+function ensure_file_exists() {
+    if [ ! -f $1 ]; then
+        echo "File $1 not found, aborting."
+        exit 1
+    fi
+}
+
+INTELMQ_API_PATH=$(python -c 'import intelmq_api; print(intelmq_api.__path__[0])')
+if [ ! $? -eq 0 ]; then
+    echo "The intelmq_api package was not found, aborting."
+    exit 1
+else
+    echo "Found intelmq_api installed in $INTELMQ_API_PATH"
+fi
+
+ensure_file_exists $SERVICE_FILE
+ensure_file_exists $SOCKET_FILE
+
+# Select first units path for library units, basing on the system configuration
+UNITS_PATH=$(systemd-analyze unit-paths | grep -v 'local' | grep '/lib/systemd/system' -m 1)
+if [ ! $? -eq 0 ]; then
+    echo "Cannot find the right Systemd unit path, aborting."
+    exit 1
+else
+    echo "Found units path in $UNITS_PATH"
+fi
+
+echo "Setting the package path in unit files"
+
+# From this point, fail fast
+set -e
+sed -i "s#$DEFAULT_INTELMQ_API_PATH#$INTELMQ_API_PATH#" $SERVICE_FILE
+sed -i "s#$DEFAULT_INTELMQ_API_PATH#$INTELMQ_API_PATH#" $SOCKET_FILE
+
+echo "Copying unit files to Systemd path"
+cp $SERVICE_FILE $UNITS_PATH/
+cp $SOCKET_FILE $UNITS_PATH/
+
+echo "Enabling and starting service"
+systemctl enable intelmq-api
+systemctl start intelmq-api
+
+echo "DONE. Please now ensure to configure your webserver"

@@ -42,5 +42,5 @@ setuptools.setup(
                                   'contrib/api-sudoers.conf', 'contrib/intelmq-api.service',
                                   'contrib/intelmq-api.socket']),
                 ('/etc/intelmq/manager', ['contrib/positions.conf'])],
-    scripts=['scripts/intelmq-api-adduser']
+    scripts=['scripts/intelmq-api-adduser', 'scripts/intelmq-api-setup-systemd']
 )
