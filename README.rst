@@ -1,4 +1,4 @@
-.. 
+..
    SPDX-FileCopyrightText: 2020 Birger Schacht
    SPDX-License-Identifier: AGPL-3.0-or-later
 
@@ -36,7 +36,7 @@ The interactive documentation is served on the `/docs` endpoint.
 
 To set the API configuration, please export the `INTELMQ_API_CONFIG` environment variable with path
 to the JSON config file in the shell you want to use. For the config reference, please check the
-`intelmq_api/config.py`.
+`intelmq_api/config.py` and the example from `contrib/api-config.json`.
 
 If you configured the session store, you will need to authorize every request. The `/v1/login`
 returns the authorization token. You can use the following command to register the user:
