@@ -18,6 +18,7 @@ CHANGELOG
 - Added code style checks to CI.
 - Added interactive API documentation available at `/docs` endpoint.
 - Added the line length limit in Python files as 100 chars.
+- Added the `intelmq-api-setup-systemd` script to help with initial setup.
 
 **Changed:**
 
@@ -29,12 +30,12 @@ CHANGELOG
 - The startup point of the application is now `intelmq_api.main:app`
 - The API is no longer a WSGI app. The Debian package is updated to run Gunicorn as a server and
   configure Apache2 as a proxy. If you had non-default configuration, please review new examples.
-- The OS native package is prepared for Debian 11 (and distribution based on it) only. For other
-  platforms, installation using `pip` is recommended.
 
 **Known issues:**
 
 - The interactive API documentation on `/docs` doesn't respect setting `Authorization` header.
+- The OS native package is prepared for Debian 11 (and distribution based on it) only. For other
+  platforms, installation using `pip` is recommended.
 
 
 3.1.0 RC (2022-08-02)
