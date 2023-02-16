@@ -11,6 +11,7 @@
 #   4. Enable IntelMQ units.
 # Configuring webserver can be done by using intelmqsetup command
 
+SERVICE_NAME=intelmq-api
 SERVICE_FILE="/etc/intelmq/intelmq-api.service"
 SOCKET_FILE="/etc/intelmq/intelmq-api.socket"
 DEFAULT_INTELMQ_API_PATH="/usr/lib/python3/dist-packages/intelmq_api"
@@ -49,19 +50,15 @@ else
     echo "Found units path in $UNITS_PATH"
 fi
 
-echo "Setting the package path in unit files"
+echo "Setting the package path and saving unit files in Systemd path"
 
 # From this point, fail fast
 set -e
-sed -i "s#$DEFAULT_INTELMQ_API_PATH#$INTELMQ_API_PATH#" $SERVICE_FILE
-sed -i "s#$DEFAULT_INTELMQ_API_PATH#$INTELMQ_API_PATH#" $SOCKET_FILE
-
-echo "Copying unit files to Systemd path"
-cp $SERVICE_FILE $UNITS_PATH/
-cp $SOCKET_FILE $UNITS_PATH/
+sed "s#$DEFAULT_INTELMQ_API_PATH#$INTELMQ_API_PATH#" $SERVICE_FILE > $UNITS_PATH/$SERVICE_NAME.service
+sed "s#$DEFAULT_INTELMQ_API_PATH#$INTELMQ_API_PATH#" $SOCKET_FILE > $UNITS_PATH/$SERVICE_NAME.socket
 
 echo "Enabling and starting service"
-systemctl enable intelmq-api
-systemctl start intelmq-api
+systemctl enable $SERVICE_NAME
+systemctl start $SERVICE_NAME
 
 echo "DONE. Please now ensure to configure your webserver"
