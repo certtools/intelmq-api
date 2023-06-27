@@ -1,4 +1,4 @@
-intelmq-api (3.1.0~rc2) UNRELEASED; urgency=medium
+intelmq-api (3.1.0~rc2-1) UNRELEASED; urgency=medium
 
   * API rewritten to use the FastAPI framework
   * Package updated to setup gunicorn with Apache2, without WSGI module
