@@ -7,6 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 import json
 import os
 import subprocess
+import tempfile
 from tempfile import TemporaryDirectory
 from typing import Dict, List, Optional
 from unittest import TestCase, mock
@@ -17,8 +18,10 @@ from intelmq.lib import utils  # type: ignore
 from intelmq_api import dependencies
 from intelmq_api.api import runner
 from intelmq_api.config import Config
+from intelmq_api.dependencies import session_store
 from intelmq_api.main import app
 from intelmq_api.runctl import RunIntelMQCtl
+from intelmq_api.session import SessionStore
 from intelmq_api.version import __version__
 
 
@@ -165,3 +168,43 @@ class TestApiWithDir(TestCase):
         with open(f"{self.conf_dir.name}/manager/positions.conf", "r") as f:
             saved = json.load(f)
         self.assertEqual(saved, data)
+
+
+class TestAPILogin(TestCase):
+    def setUp(self) -> None:
+        self.client = TestClient(app=app)
+        dependencies.startup(DummyConfig())
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp_dir.cleanup)
+
+        self.session = SessionStore(os.path.join(self.temp_dir.name, 'sessionsb'), 1000000)
+        self.session.add_user('test', 'pass')
+
+        app.dependency_overrides[session_store] = lambda: self.session
+        app.dependency_overrides[runner] = get_dummy_reader()
+
+    def tearDown(self) -> None:
+        app.dependency_overrides = {}
+
+    def test_login(self):
+        response = self.client.post("/v1/api/login", data={"username": "test", "password": "pass"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(response.json().get("login_token"))
+
+    def test_login_and_call(self):
+        response = self.client.post("/v1/api/login", data={"username": "test", "password": "pass"})
+        self.assertEqual(response.status_code, 200)
+
+        token = response.json().get("login_token")
+        authorized_response = self.client.get("/v1/api/version", headers={"authorization": token})
+        self.assertEqual(authorized_response.status_code, 200)
+        self.assertEqual(authorized_response.json()["intelmq-api"], __version__)
+
+    def test_unauthorized_call(self):
+        response = self.client.get("/v1/api/version")
+        self.assertEqual(response.status_code, 401)
+
+    def test_bad_token(self):
+        response = self.client.get(
+            "/v1/api/version", headers={"authorization": "not-a-valid-token"})
+        self.assertEqual(response.status_code, 401)

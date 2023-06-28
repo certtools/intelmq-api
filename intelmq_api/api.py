@@ -28,7 +28,7 @@ import intelmq_api.session as session
 
 from .dependencies import (api_config, cached_response, session_store,
                            token_authorization)
-from .models import LoginForm, TokenResponse
+from .models import TokenResponse
 
 api = APIRouter()
 
@@ -137,8 +137,8 @@ def config(file: str, fetch: bool = False,
 
 
 @api.post("/api/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
-def login(login_form: LoginForm, session: session.SessionStore = Depends(session_store)):
-    username, password = login_form.username, login_form.password
+def login(username: str = Form(), password: str = Form(),
+          session: session.SessionStore = Depends(session_store)):
     if session is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
