@@ -137,7 +137,7 @@ def config(file: str, fetch: bool = False,
 
 
 @api.post("/api/login", status_code=status.HTTP_200_OK, response_model=TokenResponse)
-def login(username: str = Form(), password: str = Form(),
+def login(username: str = Form(...), password: str = Form(...),
           session: session.SessionStore = Depends(session_store)):
     if session is None:
         raise HTTPException(
