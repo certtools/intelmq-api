@@ -12,7 +12,7 @@ with open("README.rst", "r") as fh:
 
 REQUIREMENTS = [
     "intelmq>=2.2.3",
-    "fastapi>=0.88.0",
+    "fastapi>=0.63.0",  # Newest version in the Debian 11 repository
     "uvicorn[standard]>=0.20.0",
     "typing-extensions>=3.10.0.0",
     "python-multipart",
