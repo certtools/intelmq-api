@@ -8,10 +8,10 @@ Author(s):
   * Bernhard Herzog <bernhard.herzog@intevation.de>
 """
 
-from typing import List
-import shlex
 import os
 import pwd
+import shlex
+from typing import List
 
 
 def effective_user_name() -> str:

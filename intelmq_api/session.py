@@ -105,9 +105,9 @@ class SessionStore:
             with self.get_con() as con:
                 return con.execute(stmt, params).fetchone()
         except sqlite3.OperationalError as exc:
-            print(f"SQLite3-Error ({exc}): Possibly missing write permissions to session file (or the folder it is located in).")
+            print(f"SQLite3-Error ({exc}): Possibly missing write permissions to"
+                  " session file (or the folder it is located in).")
             return None
-
 
     #
     # Methods for session data

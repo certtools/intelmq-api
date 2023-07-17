@@ -25,9 +25,10 @@ from .version import __version__
 # Arguments for a subprocess command line are a list of strings.
 Args = List[str]
 
-# JSON output of intelmqctl is returned as a BytesIO object because hug
-# will then simply pass its contents to the client as JSON.
-JSONFile = io.BytesIO
+# JSON output of intelmqctl is returned as bytes and then simply
+# passed to the response without (de)serialization. Type alias
+# for clear understanding of expected format and content type
+JSONFile = bytes
 
 
 class IntelMQCtlError(Exception):
@@ -51,7 +52,7 @@ failure_tips = [
      " && sudo chmod u+rw /opt/intelmq -R</code>"),
     ("sqlite3.OperationalError: no such table",
      "SQLite database may not have been"
-     " <a href='https://github.com/certtools/intelmq/blob/develop/docs/Bots.md#sqlite'>initialized</a>.")
+     " <a href='https://github.com/certtools/intelmq/blob/develop/docs/Bots.md#sqlite'>initialized</a>.")  # noqa
 ]
 
 
@@ -95,7 +96,7 @@ class RunIntelMQCtl:
 
     def _run_json(self, args: Args) -> JSONFile:
         completed = self._run_intelmq_ctl(["--type", "json"] + args)
-        return io.BytesIO(completed.stdout)
+        return completed.stdout
 
     def _run_str(self, args: Args) -> str:
         completed = self._run_intelmq_ctl(args)
@@ -155,4 +156,4 @@ class RunIntelMQCtl:
         return self._run_json(args)
 
     def get_paths(self) -> Dict[str, str]:
-        return dict(json.load(self.debug(get_paths=True))["paths"])
+        return dict(json.load(io.BytesIO(self.debug(get_paths=True)))["paths"])

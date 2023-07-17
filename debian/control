@@ -2,12 +2,15 @@ Source: intelmq-api
 Section: python
 Priority: optional
 Maintainer: IntelMQ Team <intelmq-team@cert.at>
-Uploaders: Birger Schacht <schacht@cert.at>
-Build-Depends: debhelper (>= 9),
+Uploaders: Sebastian Wagner <sebix@sebix.at>
+Build-Depends: debhelper (>= 10),
                dh-python,
                dh-exec,
                python3-all,
-               python3-setuptools
+               python3-setuptools,
+               python3-fastapi,
+               python3-typing-extensions,
+               python3-multipart
 Standards-Version: 4.5.0
 Homepage: https://github.com/certtools/intelmq-api
 Rules-Requires-Root: no
@@ -17,15 +20,20 @@ Architecture: all
 Depends: ${misc:Depends},
          ${python3:Depends},
          ${shlibs:Depends},
-         python3-requests,
-         python3-hug,
+         python3-fastapi,
+         python3-typing-extensions,
+         python3-multipart,
+         python3-uvicorn,
+         python3-uvloop,
+         python3-httptools,
+         gunicorn,
          intelmq,
          sudo,
          dbconfig-sqlite3 | dbconfig-no-thanks
 Breaks: intelmq-manager (< 2.3)
 Replaces: intelmq-manager (< 2.3)
-Recommends: libapache2-mod-wsgi-py3, apache2
-Description: HUG based API for the intelmq project
+Recommends: apache2
+Description: FastAPI-based API for the intelmq project
  IntelMQ-API provides a simple API for controlling and configuring an IntelMQ
  installation. IntelMQ is a solution for IT security teams for collecting and
  processing security feeds.

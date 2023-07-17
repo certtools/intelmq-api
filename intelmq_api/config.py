@@ -28,7 +28,6 @@ class Config:
 
     allow_origins: List[str] = ['*']
 
-
     def __init__(self, filename: Optional[str]):
         """Load configuration from JSON file"""
         raw = {}

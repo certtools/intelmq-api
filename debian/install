@@ -1,3 +1,5 @@
 #!/usr/bin/dh-exec
 contrib/api-sudoers.conf => /etc/sudoers.d/01_intelmq-api
 contrib/api-session.sql => /usr/share/dbconfig-common/data/intelmq-api/install/sqlite3
+contrib/intelmq-api.service => /lib/systemd/system/intelmq-api.service
+contrib/intelmq-api.socket => /lib/systemd/system/intelmq-api.socket

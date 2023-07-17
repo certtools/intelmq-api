@@ -1,9 +1,41 @@
-.. 
+..
    SPDX-FileCopyrightText: 2020-2022 Birger Schacht, Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
 CHANGELOG
 =========
+
+3.1.0 (unreleased)
+----------------------
+
+**Removed:**
+
+- Removed support for Python 3.6.
+- Removed duplication of the CLI commands. Adding users could be done now only by using `scripts/intelmq-api-adduser`
+
+**Added:**
+
+- Added code style checks to CI.
+- Added interactive API documentation available at `/docs` endpoint.
+- Added the line length limit in Python files as 100 chars.
+- Added the `intelmq-api-setup-systemd` script to help with initial setup.
+
+**Changed:**
+
+- The base API framework was changed from hug to the FastAPI. All endpoints were rewritten to use it
+  and the structure of the files were changed to better align with the FastAPI concepts.
+- All endpoints returns now the proper Content-Type header.
+- On authentication error, in the returned JSON dictionary, the key with explanation was changed
+  from `errors` to `error`. This is consistent with all other error messages.
+- The startup point of the application is now `intelmq_api.main:app`
+- The API is no longer a WSGI app. The Debian package is updated to run Gunicorn as a server and
+  configure Apache2 as a proxy. If you had non-default configuration, please review new examples.
+
+**Known issues:**
+
+- The interactive API documentation on `/docs` doesn't respect setting `Authorization` header.
+- The OS native package is prepared for Debian 11 (and distribution based on it) only. For other
+  platforms, installation using `pip` is recommended.
 
 
 3.1.0 RC (2022-08-02)
