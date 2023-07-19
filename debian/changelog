@@ -1,10 +1,11 @@
-intelmq-api (3.1.0~rc2-1) UNRELEASED; urgency=medium
+intelmq-api (3.2.0-1) stable; urgency=medium
 
+  [ Kamil Mankowski ]
   * API rewritten to use the FastAPI framework
   * Package updated to setup gunicorn with Apache2, without WSGI module
   * Server configuration is changed.
 
- -- Kamil Mankowski <mankowski@cert.at>  Tue, 20 Dec 2022 16:23:27 +0100
+ -- Sebastian Wagner <sebix@sebix.at>  Wed, 19 Jul 2023 13:32:47 +0200
 
 intelmq-api (3.1.0~rc-1) stable; urgency=medium
 
