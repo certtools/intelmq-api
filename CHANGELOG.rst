@@ -5,6 +5,11 @@
 CHANGELOG
 =========
 
+3.3.0 (2024-03-01)
+----------------------
+
+- Bump version number to be in sync with the main intelmq version 
+
 3.2.0 (2023-07-19)
 ----------------------
 
