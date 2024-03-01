@@ -17,7 +17,7 @@ intelmq-api
 intelmq-api is a `FastAPI <https://fastapi.tiangolo.com/>`_ based API for the `intelmq <https://github.com/certtools/intelmq/>`_ project.
 
 
-Extensive documentation regarding the installation, configuration and usage of the `intelmq-api` can be found in the `intelmq documentation <https://intelmq.readthedocs.io/en/maintenance/user/intelmq-api.html>`_.
+Extensive documentation regarding the installation, configuration and usage of the `intelmq-api` can be found in the `intelmq documentation <https://docs.intelmq.org/latest/user/api/>`_.
 
 *****************
 Development usage
