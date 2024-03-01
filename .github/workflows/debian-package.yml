@@ -16,16 +16,18 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
-    - name: Debian package action test
-      uses: schacht-certat/action-build-on-debian@v3
-      with:
-        codename: ${{ matrix.codename }}
+    # this does not currently work:
+    # - name: Debian package action test
+    #  uses: schacht-certat/action-build-on-debian@v4
+    #  with:
+    #    codename: ${{ matrix.codename }}
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v2
-      with:
-        name: debian-package-${{ matrix.codename }}-${{ github.sha }}
-        path: '~/artifacts'
-        retention-days: 5
+    # therefore, also this won't make sense:
+    # - name: Upload artifacts
+    #  uses: actions/upload-artifact@v4
+    #  with:
+    #    name: debian-package-${{ matrix.codename }}-${{ github.sha }}
+    #    path: '~/artifacts'
+    #    retention-days: 5

@@ -1,3 +1,9 @@
+intelmq-api (3.3.0-1) stable; urgency=medium
+
+  * Update to 3.3.0 - mere bump of version 
+
+ -- Aaron Kaplan <aaron@lo-res.org>  Fr, 01 Mar 2024 14:19:00 +0100
+
 intelmq-api (3.2.0-1) stable; urgency=medium
 
   [ Kamil Mankowski ]

@@ -21,5 +21,5 @@ def handle_generic_error(request: Request, exc: StarletteHTTPException):
 
 def register(app: FastAPI):
     """A hook to register handlers in the app. Need to be called before startup"""
-    app.add_exception_handler(runctl.IntelMQCtlError, ctl_error_handler)
-    app.add_exception_handler(StarletteHTTPException, handle_generic_error)
+    app.add_exception_handler(runctl.IntelMQCtlError, ctl_error_handler)      # type: ignore
+    app.add_exception_handler(StarletteHTTPException, handle_generic_error)   # type: ignore
