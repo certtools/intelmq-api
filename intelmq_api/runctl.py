@@ -113,7 +113,7 @@ class RunIntelMQCtl:
 
     def log(self, bot_id: str, lines: int, level: str) -> JSONFile:
         if level == "ALL":
-            level = "DEBUG"
+            return self._run_json(["log", bot_id, str(lines)])
         return self._run_json(["log", bot_id, str(lines), level])
 
     def list(self, kind: str) -> JSONFile:
