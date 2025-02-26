@@ -5,6 +5,14 @@
 CHANGELOG
 =========
 
+3.3.1 (unreleased)
+----------------------
+
+Tests
+^^^^^
+
+- Update Python versions: remove 3.7, add 3.12, 3.13 (PR#50 by Sebastian Wagner).
+
 3.3.0 (2024-03-01)
 ----------------------
 
