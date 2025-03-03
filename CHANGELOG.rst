@@ -1,5 +1,5 @@
 ..
-   SPDX-FileCopyrightText: 2020-2023 Birger Schacht, Sebastian Wagner
+   SPDX-FileCopyrightText: 2020-2023 nic.at GmbH, 2025 Institute for Common Good Technology, Sebastian Wagner
    SPDX-License-Identifier: AGPL-3.0-or-later
 
 CHANGELOG
@@ -8,10 +8,16 @@ CHANGELOG
 3.3.1 (unreleased)
 ----------------------
 
+## Monitor
+^^^^^^^^^^
+
+- Bot logs: fix log level filter "ALL" (PR#49 by Sebastian Wagner, fixes #48).
+
 Tests
 ^^^^^
 
 - Update Python versions: remove 3.7, add 3.12, 3.13 (PR#50 by Sebastian Wagner).
+
 
 3.3.0 (2024-03-01)
 ----------------------
