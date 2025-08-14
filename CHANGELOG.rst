@@ -11,7 +11,7 @@ CHANGELOG
 ## Monitor
 ^^^^^^^^^^
 
-- Bot logs: fix log level filter "ALL" (PR#49 by Sebastian Wagner, fixes #48).
+- Bot logs: Remove log level filter "ALL", use INFO as default (PR#51, PR#49 by Sebastian Wagner, fixes #48).
 
 Tests
 ^^^^^
@@ -22,7 +22,7 @@ Tests
 3.3.0 (2024-03-01)
 ----------------------
 
-- Bump version number to be in sync with the main intelmq version 
+- Bump version number to be in sync with the main intelmq version
 - minor fixes to re-enable all the github workflows and disable the workflows which did not run anymore.
 
 3.2.0 (2023-07-19)
