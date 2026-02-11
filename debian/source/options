@@ -1,0 +1,2 @@
+# Ignore non-Debian upstream files that differ between git checkout and orig tarball
+extend-diff-ignore = "(^|/)(\.github|\.reuse)/.*"
