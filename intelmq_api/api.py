@@ -79,7 +79,7 @@ def bot(action: Actions, id: str = Depends(ID), runner: runctl.RunIntelMQCtl = D
 
 
 @api.get("/api/getlog", dependencies=[authorized, cached])
-def get_log(lines: int, id: str = Depends(ID), level: Levels = "DEBUG",
+def get_log(lines: int, id: str = Depends(ID), level: Levels = "INFO",
             runner: runctl.RunIntelMQCtl = Depends(runner)):
     return JSONFileResponse(runner.log(id, lines, level))
 
