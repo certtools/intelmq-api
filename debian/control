@@ -10,7 +10,8 @@ Build-Depends: debhelper (>= 10),
                python3-setuptools,
                python3-fastapi,
                python3-typing-extensions,
-               python3-multipart
+               python3-multipart,
+               python3-intelmq
 Standards-Version: 4.5.0
 Homepage: https://github.com/certtools/intelmq-api
 Rules-Requires-Root: no
